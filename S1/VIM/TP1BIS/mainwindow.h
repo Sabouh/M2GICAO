@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QImage>
 #include <QString>
+#include <QFileDialog>
 
 namespace Ui {
 class MainWindow;
