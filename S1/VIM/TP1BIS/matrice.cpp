@@ -78,7 +78,7 @@ QImage Matrice::adaptatif(int** m,int cols,int rows){
 
     int i,j;
     int val=0;
-    int d;
+    int* d;
     int k,l;
 
     QImage res(rows-2,cols-2,QImage::Format_Indexed8);
