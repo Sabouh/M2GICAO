@@ -94,36 +94,56 @@ bruiter <- function(im,k){
 }
 
 #debruiter une image
-debruiter <- function(im,s){
+debruiter <- function(im,s,methode){
   #On construit le noyau de convolution
-  n <- dim(im)[1]
-  ker <- matrix(0,sqrt(s),sqrt(s))
+  k <- sqrt(s)
+  k2 <- sqrt(s) %/% 2
+  if(methode == 1){#moyenneur
+    ker <- matrix(1,k,k)
+  }else{#gauss
+    if(s==9){
+      ker <- matrix(c(1,2,1,2,4,2,1,2,1),nrow = k)      
+    }else if(s == 25){
+      ker <- matrix(c(1,7,16,7,1,7,75,164,75,7,16,164,359,164,16,7,75,164,75,7,1,7,16,7,1),nrow = k)
+      
+    }
+    
+  }
   
   mat <- im
   #On duplique les bords
-  mat <- cbind(mat,mat[,dim(mat)[1]])
-  mat <- cbind(mat[, 1],mat)
-  mat <- rbind(mat,mat[dim(mat)[1],])
-  mat <- rbind(mat[1,],mat)
+  for( i in 1:k2){
+    mat <- cbind(mat,mat[,dim(mat)[1]])
+    mat <- cbind(mat[, 1],mat)
+    mat <- rbind(mat,mat[dim(mat)[1],])
+    mat <- rbind(mat[1,],mat)
+  }
+  image(mat)
   #copie de mat
   res <-mat
+  n <- dim(mat)[1]
   #On applique le noyau de convolution
-  for( i in 2:(n+1)){
-    for(j in 2:(n+1)){
+  for( i in (k2+1):(n-k2)){
+    for(j in (k2+1):(n-k2)){
+      
       #recuperer sous matrice de centre i,j
-      sm <-
+      sm <- mat[,c((i-k2):(i+k2))]
+      sm <- sm[c((j-k2):(j+k2)),]
+      
+      dim(sm)
+      dim(ker)
       #multiplier avec ker
       multmat <- sm*ker
       #additioner les elements de la matrice resultat
+      
       #stocker ds  res a i,j
-      res[i,j] <- 
+      res[j,i] <- sum(multmat) %/% sum(ker) 
     }
   }
   
   #On enleve les lignes et colonnes de 0 precedemment ajoutées
   
   #On affiche
-  image(mat)
   return(res)
   
 }
@@ -156,10 +176,13 @@ Mb <- bruiter(lena,25)
 Mb <- bruiter(lena,50)
 
 dim(Mb)
-Mdb <-debruiter(Mb,9)
 
-m <- matrix(data= c(1, 2, 3, 4, 5, 6, 7, 8, 9),nrow=3)
+Mdb <-debruiter(Mb,16,1)
+image(Mdb)
+
+m <- matrix(data= c(1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16),nrow=4)
 m
-m[,1]
-mat <-cbind(m,m[,2])
-mat
+m[,c(2:4)]
+m[c(2:4),]
+m[,c(i-k,i+k)]
+m[c(j-k,j+k),]
