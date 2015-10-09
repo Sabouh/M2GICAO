@@ -1,9 +1,9 @@
 lena = read.csv("Documents/M2GICAO/OutilsInfos/R/lena.csv",header = FALSE)
 lena <- as.matrix(lena)
 image(lena)
-#image(lena,col = gray.colors(256))
-#image(lena,col = gray.colors(256, start = 0, end=1, gamma=3.3, alpha = NULL))
-#image(lena,col = gray.colors(256, start = 0, end=1, gamma=0.5, alpha = NULL))
+image(lena,col = gray.colors(256))
+image(lena,col = gray.colors(256, start = 0, end=1, gamma=3.3, alpha = NULL))
+image(lena,col = gray.colors(256, start = 0, end=1, gamma=0.5, alpha = NULL))
 
 #ROTATION PAR 90 degres
 rotation_qvd <- function(im){
@@ -22,7 +22,7 @@ rotation_qvd <- function(im){
 
 #ROTATION par un angle multiple de 90
 rotation <- function(image,angle){
-  n <- angle%%90
+  n <- angle%/%90
   im <- image
   for(i in 1:n){
     im <- rotation_qvd(im)
@@ -48,7 +48,6 @@ reduction <- function(im,k){
    }
  } 
  image(res)
- dim(res)
  return(res)
 }
 
@@ -98,6 +97,13 @@ debruiter <- function(im,s,methode){
   #On construit le noyau de convolution
   k <- sqrt(s)
   k2 <- sqrt(s) %/% 2
+  if(s%%2 ==0){#si s pair
+    ker <- matrix(1,k+1,k+1)
+    ker[,k+1] <-0
+    ker[k+1,] <-0
+    k <- k+1
+    k2 <-k %/%2
+  }
   if(methode == 1){#moyenneur
     ker <- matrix(1,k,k)
   }else{#gauss
@@ -118,28 +124,29 @@ debruiter <- function(im,s,methode){
     mat <- rbind(mat,mat[dim(mat)[1],])
     mat <- rbind(mat[1,],mat)
   }
-  image(mat)
   #copie de mat
   res <-mat
   n <- dim(mat)[1]
   #On applique le noyau de convolution
-  for( i in (k2+1):(n-k2)){
-    for(j in (k2+1):(n-k2)){
-      
-      #recuperer sous matrice de centre i,j
-      sm <- mat[,c((i-k2):(i+k2))]
-      sm <- sm[c((j-k2):(j+k2)),]
-      
-      dim(sm)
-      dim(ker)
-      #multiplier avec ker
-      multmat <- sm*ker
-      #additioner les elements de la matrice resultat
-      
-      #stocker ds  res a i,j
-      res[j,i] <- sum(multmat) %/% sum(ker) 
+    
+    for( i in (k2+1):(n-k2)){
+      for(j in (k2+1):(n-k2)){
+        
+        #recuperer sous matrice de centre i,j
+        sm <- mat[,c((i-k2):(i+k2))]
+        sm <- sm[c((j-k2):(j+k2)),]
+        
+        dim(sm)
+        dim(ker)
+        #multiplier avec ker
+        multmat <- sm*ker
+        #additioner les elements de la matrice resultat
+        
+        #stocker ds  res a i,j
+        res[j,i] <- sum(multmat) %/% sum(ker) 
+      }
     }
-  }
+  
   
   #On enleve les lignes et colonnes de 0 precedemment ajoutées
   
@@ -150,17 +157,29 @@ debruiter <- function(im,s,methode){
 
 res <-matrix(0,dim(lena)[1],dim(lena)[2])
 image(lena)
+res<- rotation_qvd(lena)
 res <- rotation(lena,180)
+res <- rotation(lena,270)
 image(res)
-quantize(lena,2)
-reduction(lena,9)
-#lena_svd <- svd(lena,nu=dim(lena)[1],nv=0)
-#lena_svd <- svd(lena)
-#mode(lena_svd)
-#lena_svd
-#image(lena_svd)
+lena <- rotation_qvd(lena)
+image(lena)
+quantize(lena,9)
+reduction(lena,100)
+
+
 Ak <- compression_SVD(lena,10)
+
 image(Ak)
+
+Mdist <- dist(Ak, method = "euclidean")
+Mdist <- as.matrix(Mdist)
+image(Mdist)
+
+Mdist <- dist(lena, method = "euclidean")
+Mdist <- as.matrix(Mdist)
+image(Mdist)
+image(lena)
+
 object.size(lena)
 object.size(Ak)
 
@@ -175,14 +194,10 @@ Mb <- bruiter(lena,25)
 
 Mb <- bruiter(lena,50)
 
-dim(Mb)
 
 Mdb <-debruiter(Mb,16,1)
-image(Mdb)
 
-m <- matrix(data= c(1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15,16),nrow=4)
-m
-m[,c(2:4)]
-m[c(2:4),]
-m[,c(i-k,i+k)]
-m[c(j-k,j+k),]
+image(Mdb)
+Mdist <- dist(Mdb, method = "euclidean")
+Mdist <- as.matrix(Mdist)
+image(Mdist)
