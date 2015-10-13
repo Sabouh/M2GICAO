@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Evaluation d'un patch de Bezier aux parametres u,v
+%
+% Input:
+%  - matrix N de 16 points de controle de dim 3
+%     chaque point de controle a 3 coordonnes (x,y,z)
+%     taille de B: num_n x num_n x 3
+%     B(:,:,k) keme coordonnes des16  points de controle, k=1,2,3
+%     B(i,j,:) les 3 coordonnes du point de controle b_ij
+%  - u Vecteur de |u|=num_n valeurs de parametre en u
+%  - v Vecteur de |v|=num_n valeurs de parametre en v
+
+% Output:
+%  - matrix N avec la grille de |u|x|v| points 3D sur la surface
+%    La structure de S est similaire a celle de B.
+%    Taille de S: |u|x|v|x3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function N = bezierPatchNormal(B,S,u,v)
+
+ N = zeros(length(u),length(v));
+for i = 1:n
+     for j = 1:n
+         if (i+1) <= n
+            Xu = S(i+1,j,:) - S(i,j,:);
+         end 
+         if (j+1) <= n
+             Xv = S(i,j+1,:) - S(i,j,:);    
+         end
+         N(i,j) = cross(Xu,Xv) / abs(cross(Xu,Xv));
+     end
+end
+ 
+ 
+ 
+
