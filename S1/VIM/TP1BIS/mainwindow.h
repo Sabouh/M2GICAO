@@ -1,10 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <iostream>
 #include <QMainWindow>
 #include <QImage>
 #include <QString>
 #include <QFileDialog>
+
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+
+#include "filtre.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,14 +23,35 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    void repeindre();
     bool open(QString url);
+    void afficher(QImage* image);
+
+public slots:
     bool openFilename();
+    bool gaussien();
+    bool median();
+    bool adaptatif();
+    bool gradientX();
+    bool gradientY();
+
 
 private:
     Ui::MainWindow *ui;
     QImage* img;
     QString filename;
+    QGraphicsScene *scene;
+    QGraphicsPixmapItem itemPixmap;
+
+    /*Actions pour boutons*/
+    QAction *actionOuvrir;
+    QAction *actionSauvegarder;
+    QAction *actionQuitter;
+    QAction *actionGauss;
+    QAction *actionMedian;
+    QAction *actionAdaptatif;
+    QAction *actionGradientX;
+    QAction *actionGradientY;
 };
 
 #endif // MAINWINDOW_H

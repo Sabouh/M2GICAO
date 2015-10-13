@@ -74,7 +74,7 @@ QImage Matrice::convolution3(int** m,int cols,int rows){
 
 
 /*pour une matrice de taille qcque*/
-QImage Matrice::adaptatif(int** m,int cols,int rows){
+/*QImage Matrice::adaptatif(int** m,int cols,int rows){
 
     int i,j;
     int val=0;
@@ -98,6 +98,6 @@ QImage Matrice::adaptatif(int** m,int cols,int rows){
 
 void Matrice::histogramme(){
 
-}
+}*/
 
 

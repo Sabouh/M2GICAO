@@ -15,10 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     matrice.cpp \
-    Util.cpp
+    Util.cpp \
+    filtre.cpp
 
 HEADERS  += mainwindow.h \
     matrice.h \
-    Util.h
+    Util.h \
+    filtre.h
 
 FORMS    += mainwindow.ui
