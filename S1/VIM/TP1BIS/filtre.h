@@ -7,6 +7,7 @@
 #include <limits>
 
 #include <QImage>
+using namespace std;
 
 using namespace std;
 

@@ -47,7 +47,8 @@ QImage* Filtre::adaptatif(QImage* img,int k){
 QImage* Filtre::median(QImage* img){
     int k = 3;
    /*CAS PARTICULIER*/
-  /*  QImage *copie = new QImage(img->width(), img->height(), img->format() );
+  /*
+    QImage *copie = new QImage(img->width(), img->height(), img->format() );
     copie = img->copy(0,0,img->width(),img->height());
     for(int x =0;x<img->width();x++){
         for(int y =0; y<img->height();y++){
