@@ -29,6 +29,7 @@ public:
 
 public slots:
     bool openFilename();
+    bool sauvegarder();
     bool gaussien();
     bool median();
     bool adaptatif();
