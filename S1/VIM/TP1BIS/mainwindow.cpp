@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     img = new QImage();
     scene = new QGraphicsScene(this);
-
     ui->graphicsView->setScene(scene);
 
 
@@ -62,9 +61,7 @@ void MainWindow::afficher(QImage* image){
     }
 }
 
-void MainWindow::repeindre()
-{
-     afficher(img);
+void MainWindow::repeindre(){
     scene->clear();
     QPixmap *piximg = new QPixmap();
     piximg->convertFromImage(*img);
@@ -76,28 +73,36 @@ void MainWindow::repeindre()
 
 }
 
-bool MainWindow::open(QString url)
-{
+bool MainWindow::open(QString url){
     if (img->load(url))
     {
         filename = url;
-        if(img->format() <= QImage::Format_Indexed8){
-            img->convertToFormat(QImage::Format_RGB32);
+          if(img->format() <= QImage::Format_Indexed8){
+              cout<<"ola"<<endl;
+             *img = img->convertToFormat(QImage::Format_RGB32);
         }
+
         repeindre();
         return true;
     }
     return false;
 }
 
-bool MainWindow::openFilename()
-{
+bool MainWindow::openFilename(){
     QString filename = QFileDialog::getOpenFileName(this,
         "Ouvrir une image");
     if (filename != "")
     {
         return open(filename);
     }
+    return false;
+}
+
+bool MainWindow::sauvegarder(){
+    QString filename = QFileDialog::getSaveFileName(this, "Save File");
+    if (filename != ""){
+        return img->save(filename, 0, -1);
+       }
     return false;
 }
 
@@ -112,7 +117,7 @@ bool MainWindow::gaussien(){
 
 bool MainWindow::median(){
     Filtre f;
-    img = f.median(img,3);
+    img = f.median(img);
     repeindre();
     return true;
 }
@@ -135,4 +140,17 @@ bool MainWindow::gradientY(){
     img = f.gradientY(img,3);
     repeindre();
     return true;
+}
+
+bool MainWindow::seuiller(int seuil){
+    Filtre f;
+    img = f.seuiller(img,seuil);
+    repeindre();
+    return true;
+}
+
+QImage* MainWindow::etiqueter(){
+    Filtre f;
+    QImage *etiq = f.etiqueter(img);
+    return etiq;
 }

@@ -27,13 +27,17 @@ public:
     bool open(QString url);
     void afficher(QImage* image);
 
+    QImage* etiqueter();
+
 public slots:
     bool openFilename();
+    bool sauvegarder();
     bool gaussien();
     bool median();
     bool adaptatif();
     bool gradientX();
     bool gradientY();
+    bool seuiller(int seuil);
 
 
 private:
