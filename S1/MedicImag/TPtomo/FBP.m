@@ -22,5 +22,34 @@ TFG = fft(g');
     end
      GF = (ifft(FG))';
 %end
+
 figure(2);
 imagesc(GF);
+
+figure(3);
+colormap('gray');
+imagesc(GF);
+
+%backprojection
+%phi : nphi
+% k de 1 a P
+% x.teta(phi) : x1.cos(phik) + x2.sin(phik)
+%
+N=Q;
+res = 0;
+h1 = 2/127;
+h2 = 2/80;
+mu = zeros(127,80);
+for i=1:127
+    for j=1:80
+        for k =1:P
+            xteta = (cos(k)*(-1+(i-0.5)*h1))+(sin(k)*(-1+(j-0.5)*h2));
+            res = res+ GF(k,xteta);
+        end
+        mu(i,j) = res;
+        res=0;
+    end
+end
+figure(4);
+imagesc(mu);
+
