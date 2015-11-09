@@ -15,21 +15,16 @@
 %    La structure de S est similaire a celle de B.
 %    Taille de S: |u|x|v|x3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function N = bezierPatchNormal(B,S,u,v)
+function N = bezierPatchNormal(B,u,v)
 
- N = zeros(length(u),length(v));
-for i = 1:n
-     for j = 1:n
-         if (i+1) <= n
-            Xu = S(i+1,j,:) - S(i,j,:);
-         end 
-         if (j+1) <= n
-             Xv = S(i,j+1,:) - S(i,j,:);    
-         end
-         N(i,j) = cross(Xu,Xv) / abs(cross(Xu,Xv));
-     end
+ N = zeros(length(u),length(v),3);
+ S(:,:,:) = bezierPatchEval(B(:,:,:),u,v);
+for i = 1:length(u)-1
+   	for j = 1:length(v)-1
+        Xu = S(i+1,j,:) - S(i,j,:);
+        Xuk = [Xu(1); Xu(2); Xu(3)];
+    	Xv = S(i,j+1,:) - S(i,j,:);
+        Xvk = [Xv(1); Xv(2); Xv(3)];
+    	N(i,j,:) = (cross(Xuk,Xvk) / norm(cross(Xuk,Xvk)));
+    end
 end
- 
- 
- 
-
