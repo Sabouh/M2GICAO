@@ -1,0 +1,15 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\matrice.o
+./release\Util.o
+./release\filtre.o
+./release\histogramme.o
+./release\pointh.o
+./release\points.o
+./release\noeud.o
+./release\geometrie.o
+./release\histodialog.o
+./release\moc_mainwindow.o
+./release\moc_histodialog.o
+);

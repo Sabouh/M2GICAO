@@ -12,10 +12,10 @@ close all, clear all
 % num_n : nombre de normales calcules (pour le calcul des isophotes)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-BezierSurf = load('surface1');  % read control points
+%BezierSurf = load('surface1');  % read control points
 %BezierSurf = load('surface2'); % read control points
 %BezierSurf = load('surface3'); % read control points
-%BezierSurf = load('surface4'); % read control points
+BezierSurf = load('surface4'); % read control points
 %load('teapot'); %loading matrix B
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 num_p=20;                    % nombre de valeurs de parametre en direction u et v
@@ -36,7 +36,6 @@ for k=1:np
     end
   end
 end
-B
 
 % La matrice B stocke tous les points de controle de tous les patchs
 % B(:,:,:,k) sont tous les points de controle du patch k
@@ -65,17 +64,60 @@ end
 u=linspace(0,1,num_n); v=u;  %parametrisation uniforme (num_n+1)x (num_n+1) valeurs de parametre
 
 for k=1:np
-    N(:,:,:,k)=bezierPatchNormal(B(:,:,:,k),S(:,:,:,k),u,v); %vecteurs normal du patch k
+    N(:,:,:,k)=bezierPatchNormal(B(:,:,:,k),u,v); %vecteurs normal du patch k
 end
-
 
 % ------------------------------------
 % Computing Isophotes
+L = [0 0 1];
+  for k=1:np
+      I1(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
+
+L = [0 1 0];
+  for k=1:np
+      I2(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
   
-
-
+L = [0 1 1];
+  for k=1:np
+      I3(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
+  
+L = [1 0 0];
+  for k=1:np
+      I4(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
+  
+L = [1 0 1];
+  
+  for k=1:np
+      I5(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
+  
+L = [1 1 0];
+  for k=1:np
+      I6(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
+  
+  
+L = [1 1 1];
+  for k=1:np
+      I7(:,:,:,k) = lignesIsophotes(N,L,u,v);
+  end
 
 % ------------------------------------
 % Visualisation d'un patch/surface de Bezier
   plotBezierPatch3D(B(:,:,:,k),S(:,:,:,k)) % plot d'un seul patch k
   plotBezierSurface3D(B,S)		   % plot de tous les np patches
+ %% plotBezierPatch3DNormal(B(:,:,:,k),S(:,:,:,k),N(:,:,:,k));
+  plotBezierNormale3D(B,N,u,v);
+  c = 1;
+  eps = 0.3;
+  plotLignesIso(B,I1,c,eps,u,v);
+  plotLignesIso(B,I2,c,eps,u,v);
+  plotLignesIso(B,I3,c,eps,u,v);
+  plotLignesIso(B,I4,c,eps,u,v);
+  plotLignesIso(B,I5,c,eps,u,v);
+  plotLignesIso(B,I6,c,eps,u,v);
+  plotLignesIso(B,I7,c,eps,u,v);
