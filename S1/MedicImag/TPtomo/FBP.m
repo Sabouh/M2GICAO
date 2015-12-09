@@ -1,9 +1,19 @@
-%function GF = FBP(g,P,Q);
+
 close all; 
 clear all;
-nphi=127;% nphi=P=nombre de projections
-ns=80;% ns=Q=nombre de translations  
-g=litsinogramme('data127x80',nphi,ns); % lecture des données simulées
+%%%%%%%%%%%%%%%%%%%%%%%%%Decommenter le test que l'on veut faire !
+%%%TEST1
+%nphi=127;% nphi=P=nombre de projections
+%ns=80;% ns=Q=nombre de translations  
+%g=litsinogramme('data127x80',nphi,ns); % lecture des données simulées
+
+%%%%%TEST2
+gmed=(load('data180x100'))'; % lecture des données médicales
+dimg=size(gmed);
+nphi=dimg(1);
+ns=dimg(2);
+g = gmed;
+%%%%%
 
 P = nphi;
 Q = ns;
@@ -13,15 +23,13 @@ filter = (-Q/2):1:(Q/2)-1;
 filter = abs(filter);
 filter = fftshift(filter);
 FG = zeros(Q,P);
-%GF = zeros(P,Q);
-%for l = 0:(Q-1)
+
 TFG = fft(g');
     for k=1:P
         FG(:,k) = filter' .* TFG(:,k);
-       
     end
      GF = (ifft(FG))';
-%end
+     
 
 figure(2);
 imagesc(GF);
@@ -31,25 +39,38 @@ colormap('gray');
 imagesc(GF);
 
 %backprojection
-%phi : nphi
-% k de 1 a P
-% x.teta(phi) : x1.cos(phik) + x2.sin(phik)
-%
-N=Q;
+N=200;
 res = 0;
-h1 = 2/127;
-h2 = 2/80;
-mu = zeros(127,80);
-for i=1:127
-    for j=1:80
+h = 2/Q;
+mu = zeros(N,N);
+%%On se replace ds la bonne base
+%%On replace les coordonnées dans -1 et 1
+
+for i=1:N
+    x = i/100 -1; %coordonnée x entre -1 et 1 (car l'image finale sera de taille 200x200 -> [0:200] à [-1: 1])
+    for j=1:N
+        y = j/100 -1; %coordonnée y entre -1 et 1
         for k =1:P
-            xteta = (cos(k)*(-1+(i-0.5)*h1))+(sin(k)*(-1+(j-0.5)*h2));
-            res = res+ GF(k,xteta);
+            %%On verifie que (x,y) appartient au cercle
+            if (x*cos(k*pi/P) + y*sin(k*pi/P) <= 1 && x*cos(k*pi/P) + y*sin(k*pi/P) >=-1)
+                xteta = x*cos(k*pi/P)+y*sin(k*pi/P);
+                %%On interpole xteta 
+                sl =  floor((1+xteta)/h);
+                %%On commence à 1 dans GF.
+                if(sl >0 && sl <Q)
+                    interpol = GF(k,sl)*(xteta*2/(Q-1)-sl) + GF(k,sl+1)*(2/(Q-1)-(xteta*2/(Q-1)-sl));
+                    res = res + interpol;
+                end
+            else
+               %% "pas dans le cercle";
+            end
+            
         end
+        %On place la valeur dans l'image
         mu(i,j) = res;
         res=0;
     end
 end
 figure(4);
-imagesc(mu);
-
+colormap('gray');
+imagesc(mu); 

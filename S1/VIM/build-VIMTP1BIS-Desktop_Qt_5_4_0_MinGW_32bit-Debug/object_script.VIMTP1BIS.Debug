@@ -1,0 +1,15 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\matrice.o
+./debug\Util.o
+./debug\filtre.o
+./debug\histogramme.o
+./debug\pointh.o
+./debug\points.o
+./debug\noeud.o
+./debug\geometrie.o
+./debug\histodialog.o
+./debug\moc_mainwindow.o
+./debug\moc_histodialog.o
+);
