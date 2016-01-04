@@ -1,0 +1,482 @@
+<Gratin type="pipeline">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <IOData name="mainWindow">
+  <IOData name="graphWidget">
+   <IOData name="graph">
+    <uint val="7" name="nbNodes"/>
+    <string val="imgLoaderId" name="nodeStringId-0"/>
+    <uint val="1" name="nodeVersion-0"/>
+    <string val="imageLoader" name="nodeName-0"/>
+    <string val="Imaging/" name="nodePath-0"/>
+    <string val="Image loader" name="nodeDesc-0"/>
+    <string val="Load an image." name="nodeHelp-0"/>
+    <uint val="0" name="nodeId-0"/>
+    <uint val="0" name="nodeGraphId-0"/>
+    <vector2f name="nodePos-0">
+     <float val="-1279.11" name="0"/>
+     <float val="37.3325" name="1"/>
+    </vector2f>
+    <int val="0" name="nodeInputNameSize-0"/>
+    <int val="1" name="nodeOutputNameSize-0"/>
+    <string val="image" name="nodeOutputName-0-0"/>
+    <string val="imgGenericId" name="nodeStringId-1"/>
+    <uint val="1" name="nodeVersion-1"/>
+    <string val="genericImage" name="nodeName-1"/>
+    <string val="Generic/" name="nodePath-1"/>
+    <string val="Generic node for image processing" name="nodeDesc-1"/>
+    <string val="This node was designed to create custom shaders&#xa;The settings widget allows to modify input, output parameters&#xa;as well as the output image sizes.&#xa;&#xa;WARNING1: you will be able to modify the number of inputs/outputs&#xa;only if the node is entirely disconnected.&#xa;WARNING2: input/output names will not be modified if a custom node is created&#xa;from this node because these names should be edited directly in the setting widget&#xa;WARNING3: modifying the settings of a node will remove all previously&#xa;defined keyframes&#xa;&#xa;* Special data allows to modify the output image (using a multiple of&#xa;the input size, plus an offset vector&#xa;Check use mouse/keyboard if you want to interact with the mouse&#xa;&#xa;* Input data allows to add/remove/displace input data (only if disconnected)&#xa;&#xa;* Output data allows to add/remove/displace output data (only if disconnected)&#xa;&#xa;* Param data allows to add/remove parameters that will automatically be &#xa;included in your shader.&#xa;For each of them you may choose a proper name, type, and min/max/default values.&#xa;Check keyframes if you want your parameter to be accessible&#xa; through the animation widget&#xa;&#xa;In the node interface itself:&#xa;Source tab contains the head and body of your GLSL source (only the body is editable)&#xa;Params tab contains the defined widgets according to your setting choices&#xa;Log tab contains compilation errors&#xa;&#xa;Once your settings and source completed, click on apply to see the result&#xa;" name="nodeHelp-1"/>
+    <uint val="1" name="nodeId-1"/>
+    <uint val="0" name="nodeGraphId-1"/>
+    <vector2f name="nodePos-1">
+     <float val="-1351" name="0"/>
+     <float val="-1397.79" name="1"/>
+    </vector2f>
+    <int val="1" name="nodeInputNameSize-1"/>
+    <int val="2" name="nodeOutputNameSize-1"/>
+    <string val="inBuffer0" name="nodeInputName-1-0"/>
+    <string val="outBuffer0" name="nodeOutputName-1-0"/>
+    <string val="outBuffer1" name="nodeOutputName-1-1"/>
+    <string val="imgGenericId" name="nodeStringId-2"/>
+    <uint val="1" name="nodeVersion-2"/>
+    <string val="genericImage" name="nodeName-2"/>
+    <string val="Generic/" name="nodePath-2"/>
+    <string val="Generic node for image processing" name="nodeDesc-2"/>
+    <string val="This node was designed to create custom shaders&#xa;The settings widget allows to modify input, output parameters&#xa;as well as the output image sizes.&#xa;&#xa;WARNING1: you will be able to modify the number of inputs/outputs&#xa;only if the node is entirely disconnected.&#xa;WARNING2: input/output names will not be modified if a custom node is created&#xa;from this node because these names should be edited directly in the setting widget&#xa;WARNING3: modifying the settings of a node will remove all previously&#xa;defined keyframes&#xa;&#xa;* Special data allows to modify the output image (using a multiple of&#xa;the input size, plus an offset vector&#xa;Check use mouse/keyboard if you want to interact with the mouse&#xa;&#xa;* Input data allows to add/remove/displace input data (only if disconnected)&#xa;&#xa;* Output data allows to add/remove/displace output data (only if disconnected)&#xa;&#xa;* Param data allows to add/remove parameters that will automatically be &#xa;included in your shader.&#xa;For each of them you may choose a proper name, type, and min/max/default values.&#xa;Check keyframes if you want your parameter to be accessible&#xa; through the animation widget&#xa;&#xa;In the node interface itself:&#xa;Source tab contains the head and body of your GLSL source (only the body is editable)&#xa;Params tab contains the defined widgets according to your setting choices&#xa;Log tab contains compilation errors&#xa;&#xa;Once your settings and source completed, click on apply to see the result&#xa;" name="nodeHelp-2"/>
+    <uint val="2" name="nodeId-2"/>
+    <uint val="0" name="nodeGraphId-2"/>
+    <vector2f name="nodePos-2">
+     <float val="81.8788" name="0"/>
+     <float val="-848.03" name="1"/>
+    </vector2f>
+    <int val="2" name="nodeInputNameSize-2"/>
+    <int val="1" name="nodeOutputNameSize-2"/>
+    <string val="inBuffer0" name="nodeInputName-2-0"/>
+    <string val="inBuffer1" name="nodeInputName-2-1"/>
+    <string val="outBuffer0" name="nodeOutputName-2-0"/>
+    <string val="imgGenericId" name="nodeStringId-3"/>
+    <uint val="1" name="nodeVersion-3"/>
+    <string val="genericImage" name="nodeName-3"/>
+    <string val="Generic/" name="nodePath-3"/>
+    <string val="Generic node for image processing" name="nodeDesc-3"/>
+    <string val="This node was designed to create custom shaders&#xa;The settings widget allows to modify input, output parameters&#xa;as well as the output image sizes.&#xa;&#xa;WARNING1: you will be able to modify the number of inputs/outputs&#xa;only if the node is entirely disconnected.&#xa;WARNING2: input/output names will not be modified if a custom node is created&#xa;from this node because these names should be edited directly in the setting widget&#xa;WARNING3: modifying the settings of a node will remove all previously&#xa;defined keyframes&#xa;&#xa;* Special data allows to modify the output image (using a multiple of&#xa;the input size, plus an offset vector&#xa;Check use mouse/keyboard if you want to interact with the mouse&#xa;&#xa;* Input data allows to add/remove/displace input data (only if disconnected)&#xa;&#xa;* Output data allows to add/remove/displace output data (only if disconnected)&#xa;&#xa;* Param data allows to add/remove parameters that will automatically be &#xa;included in your shader.&#xa;For each of them you may choose a proper name, type, and min/max/default values.&#xa;Check keyframes if you want your parameter to be accessible&#xa; through the animation widget&#xa;&#xa;In the node interface itself:&#xa;Source tab contains the head and body of your GLSL source (only the body is editable)&#xa;Params tab contains the defined widgets according to your setting choices&#xa;Log tab contains compilation errors&#xa;&#xa;Once your settings and source completed, click on apply to see the result&#xa;" name="nodeHelp-3"/>
+    <uint val="3" name="nodeId-3"/>
+    <uint val="0" name="nodeGraphId-3"/>
+    <vector2f name="nodePos-3">
+     <float val="1269.12" name="0"/>
+     <float val="-894.816" name="1"/>
+    </vector2f>
+    <int val="1" name="nodeInputNameSize-3"/>
+    <int val="1" name="nodeOutputNameSize-3"/>
+    <string val="inBuffer0" name="nodeInputName-3-0"/>
+    <string val="outBuffer0" name="nodeOutputName-3-0"/>
+    <string val="imgGaussianBlurId" name="nodeStringId-4"/>
+    <uint val="1" name="nodeVersion-4"/>
+    <string val="gaussianBlur" name="nodeName-4"/>
+    <string val="Imaging/" name="nodePath-4"/>
+    <string val="Gaussian blur" name="nodeDesc-4"/>
+    <string val="The amount of blur is controled by the kernel size.&#xa;Increase this size to increase the blur" name="nodeHelp-4"/>
+    <uint val="4" name="nodeId-4"/>
+    <uint val="1" name="nodeGraphId-4"/>
+    <vector2f name="nodePos-4">
+     <float val="1291.7" name="0"/>
+     <float val="11.5552" name="1"/>
+    </vector2f>
+    <int val="1" name="nodeInputNameSize-4"/>
+    <int val="1" name="nodeOutputNameSize-4"/>
+    <string val="image" name="nodeInputName-4-0"/>
+    <string val="filtering" name="nodeOutputName-4-0"/>
+    <string val="imgGaussianBlurId" name="nodeStringId-5"/>
+    <uint val="1" name="nodeVersion-5"/>
+    <string val="gaussianBlur" name="nodeName-5"/>
+    <string val="Imaging/" name="nodePath-5"/>
+    <string val="Gaussian blur" name="nodeDesc-5"/>
+    <string val="The amount of blur is controled by the kernel size.&#xa;Increase this size to increase the blur" name="nodeHelp-5"/>
+    <uint val="5" name="nodeId-5"/>
+    <uint val="2" name="nodeGraphId-5"/>
+    <vector2f name="nodePos-5">
+     <float val="505.974" name="0"/>
+     <float val="16.5804" name="1"/>
+    </vector2f>
+    <int val="1" name="nodeInputNameSize-5"/>
+    <int val="1" name="nodeOutputNameSize-5"/>
+    <string val="image" name="nodeInputName-5-0"/>
+    <string val="filtering" name="nodeOutputName-5-0"/>
+    <string val="imgGaussianBlurId" name="nodeStringId-6"/>
+    <uint val="1" name="nodeVersion-6"/>
+    <string val="gaussianBlur" name="nodeName-6"/>
+    <string val="Imaging/" name="nodePath-6"/>
+    <string val="Gaussian blur" name="nodeDesc-6"/>
+    <string val="The amount of blur is controled by the kernel size.&#xa;Increase this size to increase the blur" name="nodeHelp-6"/>
+    <uint val="6" name="nodeId-6"/>
+    <uint val="3" name="nodeGraphId-6"/>
+    <vector2f name="nodePos-6">
+     <float val="-269.561" name="0"/>
+     <float val="18.9082" name="1"/>
+    </vector2f>
+    <int val="1" name="nodeInputNameSize-6"/>
+    <int val="1" name="nodeOutputNameSize-6"/>
+    <string val="image" name="nodeInputName-6-0"/>
+    <string val="filtering" name="nodeOutputName-6-0"/>
+    <uint val="1" name="nbConnections-0-1"/>
+    <vector2u name="connection-0-1-0">
+     <uint val="0" name="0"/>
+     <uint val="0" name="1"/>
+    </vector2u>
+    <uint val="0" name="nbConnections-0-2"/>
+    <uint val="0" name="nbConnections-0-3"/>
+    <uint val="0" name="nbConnections-0-4"/>
+    <uint val="0" name="nbConnections-0-5"/>
+    <uint val="0" name="nbConnections-0-6"/>
+    <uint val="2" name="nbConnections-1-2"/>
+    <vector2u name="connection-1-2-0">
+     <uint val="1" name="0"/>
+     <uint val="1" name="1"/>
+    </vector2u>
+    <vector2u name="connection-1-2-1">
+     <uint val="0" name="0"/>
+     <uint val="0" name="1"/>
+    </vector2u>
+    <uint val="0" name="nbConnections-1-3"/>
+    <uint val="0" name="nbConnections-1-4"/>
+    <uint val="0" name="nbConnections-1-5"/>
+    <uint val="0" name="nbConnections-1-6"/>
+    <uint val="1" name="nbConnections-2-3"/>
+    <vector2u name="connection-2-3-0">
+     <uint val="0" name="0"/>
+     <uint val="0" name="1"/>
+    </vector2u>
+    <uint val="0" name="nbConnections-2-4"/>
+    <uint val="0" name="nbConnections-2-5"/>
+    <uint val="0" name="nbConnections-2-6"/>
+    <uint val="0" name="nbConnections-3-4"/>
+    <uint val="0" name="nbConnections-3-5"/>
+    <uint val="0" name="nbConnections-3-6"/>
+    <uint val="0" name="nbConnections-4-5"/>
+    <uint val="0" name="nbConnections-4-6"/>
+    <uint val="0" name="nbConnections-5-6"/>
+    <bool val="1" name="nodeHasWidget-0"/>
+    <IOData name="node-0">
+     <string val="../gratin-v0.3.1/build/data/imgs/default-tex.jpg" name="filename"/>
+     <vector2i name="size">
+      <int val="512" name="0"/>
+      <int val="512" name="1"/>
+     </vector2i>
+    </IOData>
+    <IOData name="nodeWidget-0">
+     <bool val="0" name="keepAspectRatio"/>
+     <bool val="0" name="keepSize"/>
+    </IOData>
+    <vector2f name="nodeOutputPos-0-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-1"/>
+    <IOData name="node-1">
+     <string val="420" name="genericGlslVersion"/>
+     <string val="genericImage" name="genericNodeName"/>
+     <bool val="1" name="genericUseVertex"/>
+     <bool val="0" name="genericUseTesselation"/>
+     <bool val="0" name="genericUseGeometry"/>
+     <bool val="1" name="genericUseFragment"/>
+     <int val="9729" name="genericOutFilter"/>
+     <int val="33071" name="genericOutWrap"/>
+     <bool val="0" name="genericUseDepthTest"/>
+     <bool val="0" name="genericUseBlending"/>
+     <uint val="513" name="genericDepthFunc"/>
+     <uint val="1" name="genericBlendSrc"/>
+     <uint val="0" name="genericBlendDst"/>
+     <vector4f name="genericBackground">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+      <float val="0" name="2"/>
+      <float val="0" name="3"/>
+     </vector4f>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericVertHead"/>
+     <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) out vec4 outBuffer0;&#xa;layout(location = 1) out vec4 outBuffer1;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericFragHead"/>
+     <string val="in vec2 texcoord;&#xa;void main() {&#xa;outBuffer0 =vec4(texcoord.x,texcoord.x,texcoord.x,1);&#xa;outBuffer1 = texture(inBuffer0,texcoord);&#xa;}&#xa;" name="genericFragBody"/>
+     <string val="#version 420&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericTessCHead"/>
+     <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+     <string val="#version 420&#xa;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericTessEHead"/>
+     <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+     <string val="#version 420&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericGeomHead"/>
+     <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+     <vector2f name="genericTSize">
+      <float val="1" name="0"/>
+      <float val="1" name="1"/>
+     </vector2f>
+     <vector2f name="genericTOffset">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+     </vector2f>
+     <bool val="0" name="genericNeedMouse"/>
+     <bool val="0" name="genericNeedKeyboard"/>
+     <uint val="0" name="genericNbWidgets"/>
+    </IOData>
+    <IOData name="nodeWidget-1">
+     <uint val="0" name="nbChildren"/>
+    </IOData>
+    <vector2f name="nodeInputPos-1-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-1-0">
+     <float val="56.32" name="0"/>
+     <float val="647.68" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-1-1">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-2"/>
+    <IOData name="node-2">
+     <string val="420" name="genericGlslVersion"/>
+     <string val="genericImage" name="genericNodeName"/>
+     <bool val="0" name="genericUseVertex"/>
+     <bool val="0" name="genericUseTesselation"/>
+     <bool val="0" name="genericUseGeometry"/>
+     <bool val="1" name="genericUseFragment"/>
+     <int val="9729" name="genericOutFilter"/>
+     <int val="33071" name="genericOutWrap"/>
+     <bool val="0" name="genericUseDepthTest"/>
+     <bool val="0" name="genericUseBlending"/>
+     <uint val="513" name="genericDepthFunc"/>
+     <uint val="1" name="genericBlendSrc"/>
+     <uint val="0" name="genericBlendDst"/>
+     <vector4f name="genericBackground">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+      <float val="0" name="2"/>
+      <float val="0" name="3"/>
+     </vector4f>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D inBuffer0;&#xa;uniform sampler2D inBuffer1;&#xa;" name="genericVertHead"/>
+     <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) out vec4 outBuffer0;&#xa;uniform sampler2D inBuffer0;&#xa;uniform sampler2D inBuffer1;&#xa;" name="genericFragHead"/>
+     <string val="in vec2 texcoord;&#xa;void main() {&#xa;&#x9;outBuffer0 = texture(inBuffer1,texcoord);&#xa;outBuffer0 = texture(inBuffer0,outBuffer0);&#xa;&#xa;}&#xa;" name="genericFragBody"/>
+     <string val="#version 420&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D inBuffer0;&#xa;uniform sampler2D inBuffer1;&#xa;" name="genericTessCHead"/>
+     <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+     <string val="#version 420&#xa;&#xa;uniform sampler2D inBuffer0;&#xa;uniform sampler2D inBuffer1;&#xa;" name="genericTessEHead"/>
+     <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+     <string val="#version 420&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D inBuffer0;&#xa;uniform sampler2D inBuffer1;&#xa;" name="genericGeomHead"/>
+     <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+     <vector2f name="genericTSize">
+      <float val="1" name="0"/>
+      <float val="1" name="1"/>
+     </vector2f>
+     <vector2f name="genericTOffset">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+     </vector2f>
+     <bool val="0" name="genericNeedMouse"/>
+     <bool val="0" name="genericNeedKeyboard"/>
+     <uint val="0" name="genericNbWidgets"/>
+    </IOData>
+    <IOData name="nodeWidget-2">
+     <uint val="0" name="nbChildren"/>
+    </IOData>
+    <vector2f name="nodeInputPos-2-0">
+     <float val="56.32" name="0"/>
+     <float val="647.68" name="1"/>
+    </vector2f>
+    <vector2f name="nodeInputPos-2-1">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-2-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-3"/>
+    <IOData name="node-3">
+     <string val="420" name="genericGlslVersion"/>
+     <string val="genericImage" name="genericNodeName"/>
+     <bool val="0" name="genericUseVertex"/>
+     <bool val="0" name="genericUseTesselation"/>
+     <bool val="0" name="genericUseGeometry"/>
+     <bool val="1" name="genericUseFragment"/>
+     <int val="9729" name="genericOutFilter"/>
+     <int val="33071" name="genericOutWrap"/>
+     <bool val="0" name="genericUseDepthTest"/>
+     <bool val="0" name="genericUseBlending"/>
+     <uint val="513" name="genericDepthFunc"/>
+     <uint val="1" name="genericBlendSrc"/>
+     <uint val="0" name="genericBlendDst"/>
+     <vector4f name="genericBackground">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+      <float val="0" name="2"/>
+      <float val="0" name="3"/>
+     </vector4f>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericVertHead"/>
+     <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+     <string val="#version 420&#xa;&#xa;layout(location = 0) out vec4 outBuffer0;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericFragHead"/>
+     <string val="in vec2 texcoord;&#xa;void main() {&#xa;&#x9;outBuffer0 = texture(inBuffer0,texcoord);&#xa;}&#xa;" name="genericFragBody"/>
+     <string val="#version 420&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericTessCHead"/>
+     <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+     <string val="#version 420&#xa;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericTessEHead"/>
+     <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+     <string val="#version 420&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D inBuffer0;&#xa;" name="genericGeomHead"/>
+     <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+     <vector2f name="genericTSize">
+      <float val="1" name="0"/>
+      <float val="1" name="1"/>
+     </vector2f>
+     <vector2f name="genericTOffset">
+      <float val="0" name="0"/>
+      <float val="0" name="1"/>
+     </vector2f>
+     <bool val="0" name="genericNeedMouse"/>
+     <bool val="0" name="genericNeedKeyboard"/>
+     <uint val="0" name="genericNbWidgets"/>
+    </IOData>
+    <IOData name="nodeWidget-3">
+     <uint val="0" name="nbChildren"/>
+    </IOData>
+    <vector2f name="nodeInputPos-3-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-3-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-4"/>
+    <IOData name="node-4"/>
+    <IOData name="nodeWidget-4">
+     <uint val="1" name="nbChildren"/>
+     <IOData name="childWidget-0">
+      <bool val="1" name="intAttribKeyframed"/>
+      <int val="0" name="intAttribMinVal"/>
+      <int val="500" name="intAttribMaxVal"/>
+      <IOData name="intAttribCurve">
+       <int val="269" name="currentVal"/>
+       <uint val="1" name="nbCurves"/>
+       <IOData name="curve-0">
+        <int val="0" name="interpType"/>
+        <int val="0" name="leftType"/>
+        <int val="0" name="rightType"/>
+        <IOData name="interpolator">
+         <uint val="1" name="nbPoints"/>
+         <uint val="0" name="nbTangents"/>
+         <vector2f name="controlPoint-0">
+          <float val="0" name="0"/>
+          <float val="269" name="1"/>
+         </vector2f>
+        </IOData>
+       </IOData>
+      </IOData>
+      <uint val="0" name="nbChildren"/>
+     </IOData>
+    </IOData>
+    <vector2f name="nodeInputPos-4-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-4-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-5"/>
+    <IOData name="node-5"/>
+    <IOData name="nodeWidget-5">
+     <uint val="1" name="nbChildren"/>
+     <IOData name="childWidget-0">
+      <bool val="1" name="intAttribKeyframed"/>
+      <int val="0" name="intAttribMinVal"/>
+      <int val="500" name="intAttribMaxVal"/>
+      <IOData name="intAttribCurve">
+       <int val="28" name="currentVal"/>
+       <uint val="1" name="nbCurves"/>
+       <IOData name="curve-0">
+        <int val="0" name="interpType"/>
+        <int val="0" name="leftType"/>
+        <int val="0" name="rightType"/>
+        <IOData name="interpolator">
+         <uint val="1" name="nbPoints"/>
+         <uint val="0" name="nbTangents"/>
+         <vector2f name="controlPoint-0">
+          <float val="0" name="0"/>
+          <float val="28" name="1"/>
+         </vector2f>
+        </IOData>
+       </IOData>
+      </IOData>
+      <uint val="0" name="nbChildren"/>
+     </IOData>
+    </IOData>
+    <vector2f name="nodeInputPos-5-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-5-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <bool val="1" name="nodeHasWidget-6"/>
+    <IOData name="node-6"/>
+    <IOData name="nodeWidget-6">
+     <uint val="1" name="nbChildren"/>
+     <IOData name="childWidget-0">
+      <bool val="1" name="intAttribKeyframed"/>
+      <int val="0" name="intAttribMinVal"/>
+      <int val="500" name="intAttribMaxVal"/>
+      <IOData name="intAttribCurve">
+       <int val="20" name="currentVal"/>
+       <uint val="1" name="nbCurves"/>
+       <IOData name="curve-0">
+        <int val="0" name="interpType"/>
+        <int val="0" name="leftType"/>
+        <int val="0" name="rightType"/>
+        <IOData name="interpolator">
+         <uint val="1" name="nbPoints"/>
+         <uint val="0" name="nbTangents"/>
+         <vector2f name="controlPoint-0">
+          <float val="0" name="0"/>
+          <float val="20" name="1"/>
+         </vector2f>
+        </IOData>
+       </IOData>
+      </IOData>
+      <uint val="0" name="nbChildren"/>
+     </IOData>
+    </IOData>
+    <vector2f name="nodeInputPos-6-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+    <vector2f name="nodeOutputPos-6-0">
+     <float val="56.32" name="0"/>
+     <float val="28.16" name="1"/>
+    </vector2f>
+   </IOData>
+   <float val="7.78433" name="scale"/>
+   <vector2f name="offset">
+    <float val="5.84848" name="0"/>
+    <float val="0" name="1"/>
+   </vector2f>
+   <IOData name="animation">
+    <uint val="0" name="firstFrame"/>
+    <uint val="99" name="lastFrame"/>
+    <uint val="0" name="currentFrame"/>
+    <uint val="24" name="fps"/>
+   </IOData>
+  </IOData>
+  <IOData name="animationWidget">
+   <vector2i name="animationWidgetSize">
+    <int val="640" name="0"/>
+    <int val="480" name="1"/>
+   </vector2i>
+   <IOData name="timelineWidget"/>
+  </IOData>
+  <IOData name="nodeListWidget"/>
+  <IOData name="interactionWidget">
+   <float val="3.07597" name="scale"/>
+   <vector2f name="offset">
+    <float val="0" name="0"/>
+    <float val="0" name="1"/>
+   </vector2f>
+  </IOData>
+  <IOData name="nodeInterfaceWidget"/>
+ </IOData>
+</Gratin>
