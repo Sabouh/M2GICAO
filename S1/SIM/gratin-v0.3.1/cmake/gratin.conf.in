@@ -1,0 +1,238 @@
+# the project 
+project(GRATIN)
+
+# path to gratin folder
+set(GRATIN_SRC_PATH ${CMAKE_CURRENT_LIST_DIR}/..)
+set(GRATIN_BIN_PATH ${CMAKE_BINARY_DIR})
+set(GRATIN_DIR_NAME Gratin)
+
+# version
+set(GRATIN_MAJOR_VERSION 0)
+set(GRATIN_MINOR_VERSION 3)
+set(GRATIN_PATCH_VERSION 1)
+
+add_definitions(-DGRATIN_MAJOR_VERSION=${GRATIN_MAJOR_VERSION})
+add_definitions(-DGRATIN_MINOR_VERSION=${GRATIN_MINOR_VERSION})
+add_definitions(-DGRATIN_PATCH_VERSION=${GRATIN_PATCH_VERSION})
+
+# OSX bundle info
+if(APPLE)
+  set(MACOSX_BUNDLE_NAME ${GRATIN_DIR_NAME})
+  set(prefix "${MACOSX_BUNDLE_NAME}.app/Contents")
+  set(INSTALL_INCLUDE_DIR "${prefix}/${INSTALL_INCLUDE_DIR}")
+  set(INSTALL_RUNTIME_DIR "${prefix}/MacOS")
+  set(INSTALL_LIBRARY_DIR "${prefix}/${INSTALL_LIBRARY_DIR}")
+  set(INSTALL_ARCHIVE_DIR "${prefix}/${INSTALL_ARCHIVE_DIR}")
+  set(INSTALL_DATA_DIR    "${prefix}/${INSTALL_DATA_DIR}")
+  set(INSTALL_DOC_DIR     "${prefix}/${INSTALL_DOC_DIR}")
+  set(INSTALL_CMAKE_DIR   "${prefix}/Resources")
+  set(MACOSX_BUNDLE_RESOURCES ${INSTALL_CMAKE_DIR})
+  add_definitions(-DOPENGL_MAJOR_VERSION=4 -DOPENGL_MINOR_VERSION=1)
+else()
+  set(INSTALL_RUNTIME_DIR "${GRATIN_DIR_NAME}")
+endif() 
+
+# add paths for searching external libraries
+if (NOT CMAKE_PREFIX_PATH)
+   # if(UNIX)
+   # 	set(CMAKE_PREFIX_PATH "/opt/Qt5.2.1/5.2.1/gcc_64")
+   # elseif(WIN32)
+   # 	set(SEARCH_PATH "${CMAKE_SOURCE_DIR}/../../../ext/" "C:/Qt/5.2.1")
+   # 	set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "${SEARCH_PATH}")
+   # else()
+   # 	set(CMAKE_PREFIX_PATH "/opt/Qt5.2.1/5.2.1/gcc_64")
+   # endif()
+   set(CMAKE_PREFIX_PATH "/opt/Qt5.2.1/5.2.1/gcc_64")
+endif (NOT CMAKE_PREFIX_PATH)
+
+# compiler options 
+set(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
+if(UNIX)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-long-long -Woverloaded-virtual -Wextra -Wno-variadic-macros")
+endif()
+
+# lib and exe names
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+set(GRATIN_LIB ${PROJECT_NAME_LOWER})
+set(GRATIN_EXE ${PROJECT_NAME_LOWER}-exe)
+
+# lib and exe dirs 
+set(GRATIN_NODE_LIB_DIR ${GRATIN_BIN_PATH}/nodes/lib)
+set(GRATIN_NODE_CUSTOM_DIR ${GRATIN_BIN_PATH}/nodes/custom)
+set(GRATIN_DATA_DIR ${GRATIN_BIN_PATH}/data)
+set(GRATIN_LIB_DIR ${GRATIN_BIN_PATH})
+set(GRATIN_EXE_DIR ${GRATIN_BIN_PATH})
+
+# output display options 
+set(CMAKE_COLOR_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE FALSE)
+
+# keeping shared libraries links after install 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_RPATH} ${CMAKE_INSTALL_PREFIX}/${GRATIN_DIR_NAME})
+
+# ignore these errors 
+if(POLICY CMP0020)
+        cmake_policy(SET CMP0020 NEW)
+endif()
+
+if(POLICY CMP0011)
+        cmake_policy(SET CMP0011 NEW)
+endif()
+
+# find all external lib used in gratin
+macro(find_default_packages)
+	# modules path
+	set(CMAKE_MODULE_PATH ${GRATIN_SRC_PATH}/cmake)
+	
+	# needed packages 
+	find_package(Eigen3 REQUIRED)
+	find_package(Qt5Widgets REQUIRED)	
+	find_package(Qt5Xml REQUIRED)
+        find_package(Qt5Svg REQUIRED)
+        find_package(OpenEXR QUIET)
+
+    if(APPLE)
+        find_package(ZLIB REQUIRED)
+    endif()
+endmacro(find_default_packages)
+
+
+
+
+# add paths to gratin and external libraries
+macro(add_default_paths)
+	# gratin/cmake dirs
+	include_directories(${GRATIN_SRC_PATH}/src-gratin)
+
+	# default external incude dirs 
+	include_directories(${EIGEN3_INCLUDE_DIR})
+	include_directories(${Qt5Widgets_INCLUDES})
+	include_directories(${Qt5Xml_INCLUDES})
+
+	# gratin lib dir
+	link_directories(${GRATIN_LIB_DIR})
+
+	if(PATH_TO_GRATIN)
+		link_directories(${GRATIN_LIB_DIR} ${PATH_TO_GRATIN})
+	endif()
+
+	# optional openexr package 
+	if(OPENEXR_FOUND)
+		add_definitions(-DEXR_SUPPORT) 
+		include_directories(${OPENEXR_INCLUDE_PATHS})
+	endif(OPENEXR_FOUND)
+endmacro(add_default_paths)
+
+
+
+
+# find in the input list, files that contain the Q_OBJECT keyword 
+macro(find_qt_object_files input_headers output_headers)
+  set(out_files)
+  foreach(header ${input_headers})
+    file(STRINGS "${header}" lines REGEX "Q_OBJECT")
+    if(lines)
+        list(APPEND out_files "${header}")
+    endif()
+  endforeach()
+
+  set(${output_headers} ${out_files})
+endmacro(find_qt_object_files)
+
+
+
+
+# link the lib or exe to the external libraries
+macro(link_to_default_libs target)
+	qt5_use_modules(${target} Widgets Xml)
+        target_link_libraries(${target} ${QT_LIBRARIES})
+
+	if(OPENEXR_FOUND)
+		target_link_libraries(${target} ${OPENEXR_LIBRARIES})
+	endif(OPENEXR_FOUND)
+endmacro(link_to_default_libs)
+
+
+
+
+# link to gratin library
+macro(link_to_gratin_lib target)
+	target_link_libraries(${target} ${GRATIN_LIB}) 
+endmacro(link_to_gratin_lib)
+
+set(libs "" CACHE STRING "LIBS" FORCE)
+
+# convenient macro for creating a basic node library (from source files)
+# links to libraries other than the default ones should be done manually  
+macro(create_node_lib_from_filenames node_name header_files source_files resource_files ui_files output_path)
+	# build shared libs
+	set(BUILD_SHARED_LIBS ON)
+
+	# copy files 
+	set(NODE_ALL_HEADERS "${header_files}")
+	set(NODE_SOURCES "${source_files}")
+	set(NODE_RESOURCES "${resource_files}")
+	set(NODE_UIS "${ui_files}")
+
+	# find and convert qt related files 
+	find_qt_object_files("${NODE_ALL_HEADERS}" NODE_HEADERS)
+	qt5_wrap_cpp(NODE_HEADERS_MOC ${NODE_HEADERS})
+	qt5_wrap_ui(NODE_UIS_SRC ${NODE_UIS})
+	qt5_add_resources(NODE_RESOURCES_RCC ${NODE_RESOURCES})
+
+	# output library directory
+	set(LIBRARY_OUTPUT_PATH ${output_path})
+
+	# create the library (using lib-name and all associated source-files)
+	add_library(${node_name} ${NODE_SOURCES} ${NODE_HEADERS_MOC} ${NODE_UIS_SRC} ${NODE_RESOURCES_RCC}) 
+
+	# link with default libraries and gratin
+	link_to_default_libs(${node_name})
+	link_to_gratin_lib(${node_name})
+	
+	# installation rules 
+        install(TARGETS ${node_name} DESTINATION ${INSTALL_RUNTIME_DIR}/nodes/lib)
+
+        # append to libraries list
+        if(APPLE)
+            list(APPEND libs "${INSTALL_RUNTIME_DIR}/nodes/lib/lib${node_name}.dylib")
+        elseif(WIN32)
+            list(APPEND libs "${INSTALL_RUNTIME_DIR}/nodes/lib/lib${node_name}.dll")
+        endif()
+        set(libs "${libs}" CACHE STRING "LIBS" FORCE)
+
+endmacro(create_node_lib_from_filenames)
+
+
+
+
+# convenient macro for creating a basic node library (from source paths)
+# links to libraries other than the default ones should be done manually  
+macro(create_node_lib_from_single_path node_name sources_path output_path)
+	# get all header, source and resource files 
+	file(GLOB NODE_ALL_HEADERS ${sources_path}/*.h ${sources_path}/*.hpp)
+	file(GLOB NODE_SOURCES ${sources_path}/*.cpp ${sources_path}/*.cxx)
+	file(GLOB NODE_RESOURCES ${sources_path}/*.qrc)
+	file(GLOB NODE_UIS ${sources_path}/*.ui)
+
+	# create the node lib from filenames
+	create_node_lib_from_filenames(${node_name} "${NODE_ALL_HEADERS}" "${NODE_SOURCES}" "${NODE_RESOURCES}" "${NODE_UIS}" ${output_path})
+endmacro(create_node_lib_from_single_path)
+
+
+
+
+
+# convenient maco that adds all the subdirectories containing a file CMakeLists.txt
+macro(add_sub_dirs input_path)
+	set(out_dirs)
+	file(GLOB in_dirs ${input_path}/*)
+	foreach(in_dir_name ${in_dirs})
+		if(EXISTS "${in_dir_name}/CMakeLists.txt")
+			  message("-- Found plugin directory: ${in_dir_name}")
+			  add_subdirectory(${in_dir_name})
+		endif()
+	endforeach(in_dir_name)
+endmacro(add_sub_dirs)

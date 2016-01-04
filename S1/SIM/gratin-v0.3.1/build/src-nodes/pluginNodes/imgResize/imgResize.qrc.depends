@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="imgResize.vert">imgResize.vert</file>
+      <file alias="imgResize.frag">imgResize.frag</file>
+ </qresource>
+ </RCC>

@@ -1,0 +1,15 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="copyIn.vert">copyIn.vert</file>
+      <file alias="copyIn.frag">copyIn.frag</file>
+      <file alias="copyOut.vert">copyOut.vert</file>
+      <file alias="copyOut.frag">copyOut.frag</file>
+      <file alias="copyInInv.vert">copyInInv.vert</file>
+      <file alias="copyInInv.frag">copyInInv.frag</file>
+      <file alias="copyOutInv.vert">copyOutInv.vert</file>
+      <file alias="copyOutInv.frag">copyOutInv.frag</file>
+      <file alias="fft.vert">fft.vert</file>
+      <file alias="fft.frag">fft.frag</file>
+      <file alias="fftInv.frag">fftInv.frag</file>
+ </qresource>
+ </RCC>

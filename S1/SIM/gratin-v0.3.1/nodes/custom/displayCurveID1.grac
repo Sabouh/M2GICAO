@@ -1,0 +1,169 @@
+<Gratin type="node">
+ <int name="majorVersion" val="0"/>
+ <int name="minorVersion" val="3"/>
+ <string name="coreHandleStringId" val="imgGenericId"/>
+ <uint name="coreHandleVersion" val="1"/>
+ <string name="nodeStringId-0" val="displayCurveID"/>
+ <uint name="nodeVersion-0" val="1"/>
+ <string name="nodeName-0" val="displayCurve"/>
+ <string name="nodePath-0" val="Visualization/"/>
+ <string name="nodeDesc-0" val="Display an implicit curve f(x,y)=0"/>
+ <string name="nodeHelp-0" val="Display an implicit curve f(x,y)=0. &#xa;Set your own equation in the evalFunc function. "/>
+ <uint name="nodeId-0" val="20"/>
+ <uint name="nodeGraphId-0" val="15"/>
+ <vector2f name="nodePos-0">
+  <float name="0" val="-5273.81"/>
+  <float name="1" val="-26490.2"/>
+ </vector2f>
+ <int name="nodeInputNameSize-0" val="0"/>
+ <int name="nodeOutputNameSize-0" val="1"/>
+ <string name="nodeOutputName-0-0" val="curve"/>
+ <bool name="nodeHasWidget-0" val="1"/>
+ <IOData name="node-0">
+  <string name="genericGlslVersion" val="410"/>
+  <string name="genericNodeName" val="displayCurve"/>
+  <bool name="genericUseVertex" val="0"/>
+  <bool name="genericUseTesselation" val="0"/>
+  <bool name="genericUseGeometry" val="0"/>
+  <bool name="genericUseFragment" val="1"/>
+  <int name="genericOutFilter" val="9729"/>
+  <int name="genericOutWrap" val="33071"/>
+  <bool name="genericUseDepthTest" val="0"/>
+  <bool name="genericUseBlending" val="0"/>
+  <uint name="genericDepthFunc" val="513"/>
+  <uint name="genericBlendSrc" val="1"/>
+  <uint name="genericBlendDst" val="0"/>
+  <vector4f name="genericBackground">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+   <float name="2" val="0"/>
+   <float name="3" val="0"/>
+  </vector4f>
+  <string name="genericVertHead" val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform vec2 xRange;&#xa;uniform vec2 yRange;&#xa;"/>
+  <string name="genericVertBody" val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;"/>
+  <string name="genericFragHead" val="#version 410&#xa;&#xa;layout(location = 0) out vec4 curve;&#xa;uniform vec2 xRange;&#xa;uniform vec2 yRange;&#xa;"/>
+  <string name="genericFragBody" val="in vec2 texcoord;&#xa;&#xa;const vec4 backgroundColor = vec4(1.);&#xa;const vec4 axisColor = vec4(vec3(0.),1.);&#xa;const vec4 curveColor = vec4(1.,0.,0.,1.);&#xa;const float curveWidth = 1.;&#xa;&#xa;float evalFunc(in vec2 p) {&#xa;&#x9;return 8.*cos(p.x)-p.y; // cosine &#xa;&#xa;&#x9;// other samples (comment previous lines to try)&#xa;&#x9;return 6.*exp(-(p.x*p.x)/(2.*3.*3.))-p.y; // gaussian&#xa;&#x9;return pow(p.x*p.x+p.y*p.y,3.) - 500*p.x*p.x*p.y*p.y; // clover&#xa;&#x9;return sqrt(p.x * p.x + p.y * p.y) - 7; // circle&#xa;&#x9;return p.x-p.y; // diagonal line&#xa;&#x9;return .2*p.x*p.x-p.y; // parabola&#xa;}&#xa;&#xa;float distMix(in float v,in vec2 g,in float w) {&#xa;&#x9;return smoothstep(0.,w,abs(v)/max(length(g),1e-10));&#xa;}&#xa;&#xa;void main() {&#xa;&#x9;const float eps = 1e-2;&#xa;&#xa;&#x9;float diffx = xRange.y-xRange.x;&#xa;&#x9;float diffy = yRange.y-yRange.x;&#xa;&#xa;&#x9;// axis coord (in texture coord)&#xa;&#x9;vec2 a = vec2(-xRange.x/diffx,-yRange.x/diffy)-texcoord;&#xa;&#x9;float vAxis = min(abs(a.x),abs(a.y));&#xa;&#xa;&#x9;// position&#xa;&#x9;vec2 p = vec2(texcoord.x*diffx+xRange.x,texcoord.y*diffy+yRange.x);&#xa;&#xa;&#x9;// eval function and gradient&#xa;&#x9;float vFunc = evalFunc(p);&#xa;&#x9;vec2 gFunc = vec2(&#x9;evalFunc(p+vec2(eps,0.))-evalFunc(p-vec2(eps,0.)),&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;evalFunc(p+vec2(0.,eps))-evalFunc(p-vec2(0.,eps)))/(2.*eps);&#xa;&#xa;&#x9;// add colors &#xa;&#x9;float md = .5*(abs(diffx)+abs(diffy)); &#xa;&#x9;vec4 color = backgroundColor;&#xa;&#x9;color = mix(axisColor,color,distMix(vAxis,vec2(.5),.005));&#xa;&#x9;color = mix(curveColor,color,distMix(vFunc,gFunc,.005*md*curveWidth));&#xa;&#xa;&#x9;curve = color;&#xa;}&#xa;"/>
+  <string name="genericTessCHead" val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform vec2 xRange;&#xa;uniform vec2 yRange;&#xa;"/>
+  <string name="genericTessCBody" val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;"/>
+  <string name="genericTessEHead" val="#version 410&#xa;&#xa;uniform vec2 xRange;&#xa;uniform vec2 yRange;&#xa;"/>
+  <string name="genericTessEBody" val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;"/>
+  <string name="genericGeomHead" val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform vec2 xRange;&#xa;uniform vec2 yRange;&#xa;"/>
+  <string name="genericGeomBody" val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}"/>
+  <vector2f name="genericTSize">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float name="0" val="512"/>
+   <float name="1" val="512"/>
+  </vector2f>
+  <bool name="genericNeedMouse" val="0"/>
+  <bool name="genericNeedKeyboard" val="0"/>
+  <uint name="genericNbWidgets" val="2"/>
+  <int name="genericWidgetType-0" val="2"/>
+  <int name="genericWidgetView-0" val="1"/>
+  <string name="genericWidgetName-0" val="xRange"/>
+  <bool name="genericWidgetKeyframed-0" val="1"/>
+  <int name="genericWidgetType-1" val="2"/>
+  <int name="genericWidgetView-1" val="1"/>
+  <string name="genericWidgetName-1" val="yRange"/>
+  <bool name="genericWidgetKeyframed-1" val="1"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint name="nbChildren" val="2"/>
+  <IOData name="childWidget-0">
+   <bool name="vector2fAttribKeyframed" val="1"/>
+   <vector2f name="vector2fAttribMinVal">
+    <float name="0" val="-100"/>
+    <float name="1" val="-100"/>
+   </vector2f>
+   <vector2f name="vector2fAttribMaxVal">
+    <float name="0" val="100"/>
+    <float name="1" val="100"/>
+   </vector2f>
+   <IOData name="vector2fAttribCurve">
+    <vector2f name="currentVal">
+     <float name="0" val="-10"/>
+     <float name="1" val="10"/>
+    </vector2f>
+    <uint name="nbCurves" val="2"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="-10"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-1">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="10"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <uint name="nbChildren" val="0"/>
+  </IOData>
+  <IOData name="childWidget-1">
+   <bool name="vector2fAttribKeyframed" val="1"/>
+   <vector2f name="vector2fAttribMinVal">
+    <float name="0" val="-100"/>
+    <float name="1" val="-100"/>
+   </vector2f>
+   <vector2f name="vector2fAttribMaxVal">
+    <float name="0" val="100"/>
+    <float name="1" val="100"/>
+   </vector2f>
+   <IOData name="vector2fAttribCurve">
+    <vector2f name="currentVal">
+     <float name="0" val="-10"/>
+     <float name="1" val="10"/>
+    </vector2f>
+    <uint name="nbCurves" val="2"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="-10"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-1">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="10"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <uint name="nbChildren" val="0"/>
+  </IOData>
+ </IOData>
+ <vector2f name="nodeOutputPos-0-0">
+  <float name="0" val="56.32"/>
+  <float name="1" val="28.16"/>
+ </vector2f>
+</Gratin>

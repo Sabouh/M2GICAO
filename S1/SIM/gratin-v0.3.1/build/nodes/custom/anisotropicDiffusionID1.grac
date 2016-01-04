@@ -1,0 +1,81 @@
+<Gratin type="node">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <string val="pingPongGenericId" name="coreHandleStringId"/>
+ <uint val="1" name="coreHandleVersion"/>
+ <string val="anisotropicDiffusionID" name="nodeStringId-0"/>
+ <uint val="1" name="nodeVersion-0"/>
+ <string val="anisotropicDiffusion" name="nodeName-0"/>
+ <string val="Imaging/" name="nodePath-0"/>
+ <string val="Anisotropic diffusion [Perona and Malik TPAMI 1990]" name="nodeDesc-0"/>
+ <string val="Implementation of the anisotropic diffusion, from the paper &quot;Scale-space and edge detection using anisotropic diffusion&quot; [Perona and Malik TPAMI 1990]. &#xa;&#xa;This is an iterative node. Increase the number of passes will increase the blur. &#xa;The distance function is controlled by a gaussian function in that case. " name="nodeHelp-0"/>
+ <uint val="34" name="nodeId-0"/>
+ <uint val="4" name="nodeGraphId-0"/>
+ <vector2f name="nodePos-0">
+  <float val="1020.28" name="0"/>
+  <float val="-14473.9" name="1"/>
+ </vector2f>
+ <int val="1" name="nodeInputNameSize-0"/>
+ <int val="1" name="nodeOutputNameSize-0"/>
+ <string val="image" name="nodeInputName-0-0"/>
+ <string val="diffusion" name="nodeOutputName-0-0"/>
+ <bool val="1" name="nodeHasWidget-0"/>
+ <IOData name="node-0">
+  <string val="410" name="genericGlslVersion"/>
+  <string val="anisotropicDiffusion" name="genericNodeName"/>
+  <bool val="0" name="genericUseVertex"/>
+  <bool val="0" name="genericUseTesselation"/>
+  <bool val="0" name="genericUseGeometry"/>
+  <bool val="1" name="genericUseFragment"/>
+  <int val="9729" name="genericOutFilter"/>
+  <int val="33071" name="genericOutWrap"/>
+  <bool val="0" name="genericUseDepthTest"/>
+  <bool val="0" name="genericUseBlending"/>
+  <uint val="513" name="genericDepthFunc"/>
+  <uint val="1" name="genericBlendSrc"/>
+  <uint val="0" name="genericBlendDst"/>
+  <vector4f name="genericBackground">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+   <float val="0" name="2"/>
+   <float val="0" name="3"/>
+  </vector4f>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D image;&#xa;uniform sampler2D pingpong0;&#xa;uniform int numpass;&#xa;" name="genericVertHead"/>
+  <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) out vec4 diffusion;&#xa;uniform sampler2D image;&#xa;uniform sampler2D pingpong0;&#xa;uniform int numpass;&#xa;" name="genericFragHead"/>
+  <string val="in vec2 texcoord;&#xa;&#xa;void loadVals(in sampler2D tex,out vec3 vals[5]) {&#xa;&#x9;// neighborhood&#xa;&#x9;vec2 ps = 1./vec2(textureSize(tex,0));&#xa;&#x9;vals[0] = texture(tex,texcoord).xyz;&#xa;&#x9;vals[1] = texture(tex,texcoord+vec2(-ps.x,0.)).xyz;&#xa;&#x9;vals[2] = texture(tex,texcoord+vec2(ps.x,0.)).xyz;&#xa;&#x9;vals[3] = texture(tex,texcoord+vec2(0.,-ps.y)).xyz;&#xa;&#x9;vals[4] = texture(tex,texcoord+vec2(0.,ps.y)).xyz;&#xa;}&#xa;&#xa;float dist(in vec3 c1,in vec3 c2) {&#xa;&#x9;// distance control &#xa;&#x9;float s = 0.02;&#xa;&#x9;float x = length(c1)-length(c2);&#xa;&#x9;float d = exp(-(x*x)/(2.*s*s));&#xa;&#x9;return d;&#xa;}&#xa;&#xa;vec4 applyFiltering(in sampler2D tex) {&#xa;&#x9;// anisotropic filtering&#xa;&#x9;vec3 Vf[5];&#xa;&#x9;vec3 Vd[5];&#xa;&#x9;loadVals(tex,Vf);&#xa;&#x9;loadVals(image,Vd);&#xa;&#xa;  &#x9;vec3 R = Vf[0] + &#xa;&#x9;&#x9;&#x9;.1*(dist(Vd[1],Vd[0])*(Vf[1]-Vf[0]) +&#xa;&#x9;&#x9;&#x9;&#x9;dist(Vd[2],Vd[0])*(Vf[2]-Vf[0]) +&#xa;&#x9;&#x9;&#x9;&#x9;dist(Vd[3],Vd[0])*(Vf[3]-Vf[0]) +&#xa;&#x9;&#x9;&#x9;&#x9;dist(Vd[4],Vd[0])*(Vf[4]-Vf[0]));&#xa;&#xa;&#x9;return vec4(R,1.);&#xa;}&#xa;&#xa;void main() {&#xa;&#x9;if(numpass==0) { // first pass: copy input&#xa;&#x9;&#x9;diffusion = texture(image,texcoord);&#xa;&#x9;} else { // otherwise: successively apply filtering&#xa;&#x9;&#x9;diffusion = applyFiltering(pingpong0);&#xa;&#x9;}&#xa;}&#xa;" name="genericFragBody"/>
+  <string val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D image;&#xa;uniform sampler2D pingpong0;&#xa;uniform int numpass;&#xa;" name="genericTessCHead"/>
+  <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+  <string val="#version 410&#xa;&#xa;uniform sampler2D image;&#xa;uniform sampler2D pingpong0;&#xa;uniform int numpass;&#xa;" name="genericTessEHead"/>
+  <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+  <string val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D image;&#xa;uniform sampler2D pingpong0;&#xa;uniform int numpass;&#xa;" name="genericGeomHead"/>
+  <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+  <vector2f name="genericTSize">
+   <float val="1" name="0"/>
+   <float val="1" name="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+  </vector2f>
+  <bool val="0" name="genericNeedMouse"/>
+  <bool val="0" name="genericNeedKeyboard"/>
+  <uint val="0" name="genericNbWidgets"/>
+  <int val="100" name="pingPongNumber"/>
+  <bool val="0" name="pingPongUpdateOnceChanged"/>
+  <bool val="0" name="pingPongUpdateAllChanged"/>
+  <bool val="0" name="pingPongReinitWhenChanged"/>
+  <bool val="0" name="pingPongRefreshAllFrames"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint val="0" name="nbChildren"/>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+</Gratin>

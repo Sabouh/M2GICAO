@@ -1,0 +1,11 @@
+-I/home/b/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/cmake/../src-gratin
+-I/usr/include/eigen3
+-I/usr/include/OpenEXR
+-I/home/b/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/src-nodes/genericNodes/imgSpritesCustom/../customNodeFiles
+-DGRATIN_MAJOR_VERSION=0
+-DGRATIN_MINOR_VERSION=3
+-DGRATIN_PATCH_VERSION=1
+-DEXR_SUPPORT
+-o
+/home/b/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/build/src-nodes/genericNodes/imgSpritesCustom/__/customNodeFiles/moc_genericCustomWidget.cpp
+/home/b/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/src-nodes/genericNodes/customNodeFiles/genericCustomWidget.h
