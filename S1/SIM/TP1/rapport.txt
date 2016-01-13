@@ -11,7 +11,7 @@ PIPELINE GRAPHIQUE:
 		Pour TessLevelOuter : si T augmente le nombre de noeuds sur les arêtes extérieures augmente
 		Pour TessLevelInner : si T augmente, le nombre de noeuds sur la diagonale intérieure aigmente
 			
-	Rasterisation:
+	Rasterisation: 
 	Visualisation:
 	Un peu de relief:
 	Contrôle du niveau de tessellation:
