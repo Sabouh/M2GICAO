@@ -67,65 +67,12 @@ def example_mesh_manip(obm):
 
 
 def loop_subdivision(obm):
-
-    #sauvegarde des positions des nouveaux sommets et des sommets à remplacer
-    replacevertices = []
-    splitvertices = []
-    #sauvegarde des nouvelles positions des sommets
-    for v in obm.verts:
-        print("coucou ")
-        #n : nb de voisins de v
-        n = len(v.link_edges)
-        #beta 
-        beta = 1/n*(5/8 - ((3+2*cos(2*pi/n))*(3+2*cos(2*pi/n)))/64)
-        #le sommet en question
-        s_replace = (1-n*beta)*v.co
-        #pour chaque arête qui part de ce sommet
-        for edge in (v.link_edges):
-            neigh = edge.other_vert(v)
-            s_replace = s_replace + beta*neigh.co
-        replacevertices.append(s_replace)#ok
-        
-        
-    #sauvegarde des positions des nouveaux sommets
-    #for v in obm.verts:
-    #    s_split = 3*v.co
-    #    for edge in (v.link_edges):
-    #        neigh = edge.other_vert(v.index)
-    #        s_split =  s_split + 3*neigh.co
-            #trouver les 2 faces avec poids de 1
-    #        s_split = s_split + edge.link_faces.edges .co
-           #  ou edges
-    #        s_split = s_split + edge.link_faces.verts .co
-                
-    #    splitvertices.append(s_split)#pasok
-     
-    ###############################################osef
-    
-    #creation d'un new mesh
-    nobm = bmesh.new()
-    #insertion des nouvelle positions
-    for v in replacevertices:
-        nobm.verts.new(v);
-        # array of indices that represent faces
-    for f in nobm.faces:
-        # get vertex indices (in the old mesh) 
-        v1 = f.verts[0].index
-        v2 = f.verts[1].index
-        v3 = f.verts[2].index
-        
-        # create this face in the new mesh
-        nbm.faces.new([nobm.verts[v1],nobm.verts[v2],nobm.verts[v3]])
-    
-    # return the new mesh 
-    return nobm
-
-    ###############################################osef
-        
+	replacevertices = [];
+	splitvertices = [];
     ####################################
     # YOUR CODE/FUNCTIONS SHOULD GO HERE
     ####################################
-    #return example_mesh_manip(obm)
+    return example_mesh_manip(obm)
 
 
 def subdivide():
