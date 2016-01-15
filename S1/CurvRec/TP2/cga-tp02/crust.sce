@@ -7,8 +7,28 @@ function Crust(S)
   
   // ******************************
   
-  [T,C,r] = qdelaunay(S);
-    
+  [T,C,r] = delaunay(S);
+  
+  //Compute the Delaunay triangulation T
+  
+  //Compute the set C of the circumscribed circle assiociated to triangles T
+  
+  //Compute the Delaunay triangulation D of the set of points T U C
+  S1 = [T C];
+  [T1,C1,r] = delaunay(S1);
+  //CRUST = set of edges of D uniquely connected by points in P
+  //On veut prendre les arêtes compute que sur les triangles et pas les cercles
+  //donc les nT premiers
+  [ligne,col] = size(T);
+  CRUST = T1(1:ligne,:); 
+ //R = []
+ for i=1:ligne
+     R = [R ; [CRUST(i,col),CRUST(i,1)]]
+     for j=1:col-1
+        R = [R ; [CRUST(i,j),CRUST(i,j+1)]];
+     end
+ end
+ 
   
   // nouvelle figure 
   scf();
