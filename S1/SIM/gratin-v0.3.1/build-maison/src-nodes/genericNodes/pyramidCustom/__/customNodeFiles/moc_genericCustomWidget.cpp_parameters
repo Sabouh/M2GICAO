@@ -1,0 +1,9 @@
+-I/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/cmake/../src-gratin
+-I/usr/include/eigen3
+-I/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/src-nodes/genericNodes/pyramidCustom/../customNodeFiles
+-DGRATIN_MAJOR_VERSION=0
+-DGRATIN_MINOR_VERSION=3
+-DGRATIN_PATCH_VERSION=1
+-o
+/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/build-maison/src-nodes/genericNodes/pyramidCustom/__/customNodeFiles/moc_genericCustomWidget.cpp
+/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/src-nodes/genericNodes/customNodeFiles/genericCustomWidget.h

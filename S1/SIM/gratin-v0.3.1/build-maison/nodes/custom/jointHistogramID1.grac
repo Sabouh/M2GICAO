@@ -1,0 +1,81 @@
+<Gratin type="node">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <string val="imgSpritesGenericId" name="coreHandleStringId"/>
+ <uint val="1" name="coreHandleVersion"/>
+ <string val="jointHistogramID" name="nodeStringId-0"/>
+ <uint val="1" name="nodeVersion-0"/>
+ <string val="jointHistogram" name="nodeName-0"/>
+ <string val="Analysis/" name="nodePath-0"/>
+ <string val="Joint histogram between 2 images" name="nodeDesc-0"/>
+ <string val="The joint histogram shows the per pixel correlation between 2 images. &#xa;Pixel intensities of the first and second images respectively correspond to the x- and y-axis.&#xa;A perfect diagonal means that the 2 input images are equals.&#xa;&#xa;By default, the 3 RGB channels are displayed using 3 splats per pixel&#xa;(see the geometry shader to modify any kind of data).  &#xa;&#xa;To display only the luminance for instance: &#xa;change the number of invocations to 1 (1 splat per pixel instead of 3). &#xa;compute the luminances of color1 and color2. &#xa;use them to set the splat position (gl_Position)&#xa;modify the output color as your own conveniance. &#xa;" name="nodeHelp-0"/>
+ <uint val="3" name="nodeId-0"/>
+ <uint val="0" name="nodeGraphId-0"/>
+ <vector2f name="nodePos-0">
+  <float val="857.757" name="0"/>
+  <float val="290.993" name="1"/>
+ </vector2f>
+ <int val="2" name="nodeInputNameSize-0"/>
+ <int val="1" name="nodeOutputNameSize-0"/>
+ <string val="img1" name="nodeInputName-0-0"/>
+ <string val="img2" name="nodeInputName-0-1"/>
+ <string val="histogram" name="nodeOutputName-0-0"/>
+ <bool val="1" name="nodeHasWidget-0"/>
+ <IOData name="node-0">
+  <string val="410" name="genericGlslVersion"/>
+  <string val="jointHistogram" name="genericNodeName"/>
+  <bool val="1" name="genericUseVertex"/>
+  <bool val="0" name="genericUseTesselation"/>
+  <bool val="1" name="genericUseGeometry"/>
+  <bool val="1" name="genericUseFragment"/>
+  <int val="9729" name="genericOutFilter"/>
+  <int val="33071" name="genericOutWrap"/>
+  <bool val="0" name="genericUseDepthTest"/>
+  <bool val="1" name="genericUseBlending"/>
+  <uint val="513" name="genericDepthFunc"/>
+  <uint val="1" name="genericBlendSrc"/>
+  <uint val="771" name="genericBlendDst"/>
+  <vector4f name="genericBackground">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+   <float val="0" name="2"/>
+   <float val="0" name="3"/>
+  </vector4f>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;uniform sampler2D img1;&#xa;uniform sampler2D img2;&#xa;" name="genericVertHead"/>
+  <string val="void main() {&#xa;&#x9;gl_Position  = vec4(vertex,0,1);&#xa;}&#xa;" name="genericVertBody"/>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) out vec4 histogram;&#xa;uniform sampler2D img1;&#xa;uniform sampler2D img2;&#xa;" name="genericFragHead"/>
+  <string val="in vec4 color;&#xa;&#xa;void main() {&#xa;&#x9;histogram = color;&#xa;}&#xa;" name="genericFragBody"/>
+  <string val="#version 410&#xa;&#xa;layout(vertices = 1) out;&#xa;uniform sampler2D img1;&#xa;uniform sampler2D img2;&#xa;" name="genericTessCHead"/>
+  <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+  <string val="#version 410&#xa;&#xa;uniform sampler2D img1;&#xa;uniform sampler2D img2;&#xa;" name="genericTessEHead"/>
+  <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position;&#xa;}&#xa;" name="genericTessEBody"/>
+  <string val="#version 410&#xa;&#xa;layout(points) in;&#xa;uniform sampler2D img1;&#xa;uniform sampler2D img2;&#xa;" name="genericGeomHead"/>
+  <string val="layout(points, invocations = 3) in;&#xa;layout(points, max_vertices = 1) out;&#xa;&#xa;out vec4 color;&#xa;&#xa;void main() {&#xa;&#x9;vec2 coord = gl_in[0].gl_Position.xy*.5+.5;&#xa;&#x9;vec3 color1 = texture(img1,coord).xyz*2.-1.;&#xa;&#x9;vec3 color2 = texture(img2,coord).xyz*2.-1.;&#xa;&#x9;int id = gl_InvocationID;&#xa;&#xa;&#x9;color = vec4(vec3(0.),.2);&#xa;&#xa;&#x9;color[id] = 1.;&#xa;&#x9;gl_Position = vec4(color1[id],color2[id],0.,1.);&#xa;&#x9;EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+  <vector2f name="genericTSize">
+   <float val="1" name="0"/>
+   <float val="1" name="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+  </vector2f>
+  <bool val="0" name="genericNeedMouse"/>
+  <bool val="0" name="genericNeedKeyboard"/>
+  <uint val="0" name="genericNbWidgets"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint val="0" name="nbChildren"/>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="647.68" name="1"/>
+ </vector2f>
+ <vector2f name="nodeInputPos-0-1">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+</Gratin>

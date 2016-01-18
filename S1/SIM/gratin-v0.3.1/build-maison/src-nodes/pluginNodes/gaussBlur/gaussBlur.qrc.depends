@@ -1,0 +1,6 @@
+ <!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="gaussBlur.vert">gaussBlur.vert</file>
+      <file alias="gaussBlur.frag">gaussBlur.frag</file>
+ </qresource>
+ </RCC>
