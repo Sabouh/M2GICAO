@@ -19,6 +19,8 @@ public:
     void setZ(float z);
     /**/
     float distance(Point p1,Point p2);
+    //calcule la distance entre p1 et p2 en ne prenant pas en compte l'altitude
+    float distance2(Point p1,Point p2);
     void afficher();
 
 private:

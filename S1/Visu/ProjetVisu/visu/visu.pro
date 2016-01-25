@@ -15,12 +15,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     parseur.cpp \
-    csv_meteofranceparser.cpp \
-    point.cpp
+    point.cpp \
+    cellule.cpp
 
 HEADERS  += mainwindow.h \
     parseur.h \
-    csv_meteofranceparser.h \
-    point.h
+    point.h \
+    cellule.h
 
 FORMS    += mainwindow.ui

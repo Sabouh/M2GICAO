@@ -9,3 +9,16 @@ L'utilisation de QStringList est justifiée par la méthode filter de cette clas
 Cela facilite alors les join entre les tables sur les "ID".
 
 Ensuite, les coordonnees des stations peuvent être recupéré par l'appel de la fonction listePoints qui retourne un QVector<Point>
+
+
+Shepard : 
+
+On recupere les longitudes latitudes et altitudes minimales et maximales.
+Ensuite on crée une grille de longueur NxN
+Pour tous les points de cette grille, on interpole.
+
+Hardy :
+N/A
+
+Marching Square :
+ne fonctionne pas

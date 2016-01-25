@@ -24,9 +24,10 @@ void parseur::parse(QFile *f){
     QTextStream in(f);
 
     /*On parse les clés*/
-    ligne = in.readLine();
+    QString ligne = in.readLine();
     cles = ligne.split(";");
 
+    QStringList liste;
     while(!in.atEnd()){
 
         //on recupere la ligne sous forme d'une QStringList
@@ -56,15 +57,26 @@ void parseur::join(parseur p1, parseur p2){
 
 /*ATTENTION SEULEMENT UTILISABLE SUR UN PARSEUR DE STATIONS*/
 /*renvoie vecteur contenant la position de chaque station*/
-QVector<Point> parseur::listePoints(){
+QVector<Point> parseur::listePoints(parseur data){
     //On sait que latitude = position  2, longitude = position 3 , altitude = position 4
     QVector<Point> coordonnees;
     QStringList s;
-    QString sl ;
+    QString sl,stat ;
 
-    for(int i=0;i<donnees.length();i++){
-        sl = donnees.at(i).at(0);
+    int j=0;
+    //On parcourt les donnees
+    for(int i=0;i<data.donnees.length();i++){
+        //On recupere la ligne i
+        sl = data.donnees.at(i).at(0);
         s = sl.split(";");
+
+        while(j<donnees.length() && ( (donnees.at(j).filter(s.at(0))).isEmpty()    )){
+            j++;
+        }
+
+        sl = donnees.at(j).at(0);
+        s = sl.split(";");
+
         coordonnees.push_back( Point( s.at(2).toFloat(), s.at(3).toFloat(), s.at(4).toFloat() ) );
     }
     return coordonnees;

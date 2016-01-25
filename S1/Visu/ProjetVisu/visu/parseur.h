@@ -28,13 +28,11 @@ public:
     void parse(QFile *f);
     void afficherQStringList(QStringList s);
     void join(parseur p1, parseur p2);
-    QVector<Point> listePoints();
+    QVector<Point> listePoints(parseur p);
     QVector<float> listeDonnees(string t);
 
 private:
-    QString ligne;
     QStringList cles;
-    QStringList liste;
     QVector<QStringList> donnees;
 //public slots:
 
