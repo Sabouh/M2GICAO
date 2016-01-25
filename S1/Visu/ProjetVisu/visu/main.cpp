@@ -10,6 +10,7 @@
 #include "cellule.h"
 #include <eigen3/Eigen/Dense>
 #include <limits>
+#include <cmath>
 
 using namespace std;
 using namespace Eigen;
@@ -83,7 +84,7 @@ Point maximum(QVector<Point> lP){
 
 /*Interpolation de Shepard*/
 /*On renvoie les valeurs interpolées sous forme d'une matrice NxN*/
-QVector<QVector<float> > shepard(QVector<Point> stations, QVector<float> donnees){
+QVector<QVector<float> > shepard(QVector<Point> stations, QVector<float> donnees,QImage* colorMap){
     QVector<QVector<float> > donnees_interpolees;
     QVector<float> ligne;
     QVector<Point> nouveaux_points;
@@ -121,6 +122,10 @@ QVector<QVector<float> > shepard(QVector<Point> stations, QVector<float> donnees
                 //fi = donnees.at(k)
                 res += poids*donnees.at(k);
             }
+            //colorMap
+            float c1 = (res- minD) /(maxD-minD);
+            colorMap->setPixel(i,j,qRgb(255,c1*255,0));
+
             //on sauvegarde la nouvelle valeur
             ligne.push_back(res);
             //on sauvegarde le point associé
@@ -133,12 +138,13 @@ QVector<QVector<float> > shepard(QVector<Point> stations, QVector<float> donnees
 }
 
 
-
 /*Interpolation Hardy*/
 void hardy(QVector<Point> stations, QVector<float> donnees){
     MatrixXf A = MatrixXf::Zero(donnees.length(),donnees.length());
     VectorXf b = VectorXf(donnees.length());
     VectorXf x;
+    int Rw = 3;
+
 }
 
 /*dessine ligne iso*/
@@ -268,6 +274,8 @@ void marchingSquare( QVector<QVector<float> > valeurs, float lambda,QImage *img)
 
 }
 
+
+
 int main(int argc, char *argv[])
 {
 
@@ -293,6 +301,7 @@ int main(int argc, char *argv[])
 
 
     /*-----------------------INTERPOLATION-----------------------*/
+    QImage *colorMap = new QImage(N,N,QImage::Format_RGB32);
 
     cout <<"interpolation"<<endl;
 
@@ -300,15 +309,6 @@ int main(int argc, char *argv[])
     //ici temperature, on peut changer comme on veut
     QVector<float> listeD = data.listeDonnees("t");
 
-    QVector<QVector<float> > interpolation = shepard(listeP,listeD);
-    //hardy(listeP,listeD);
-    /*-----------------------------------------------------------*/
-
-
-    /*--------------------COURBES ISO VALEURS--------------------*/
-
-
-    QImage *img = new QImage(N,N,QImage::Format_RGB32);
     /*On cherche les extremas des donnees*/
     minD = numeric_limits<float>::max();
     maxD = numeric_limits<float>::min();
@@ -321,6 +321,17 @@ int main(int argc, char *argv[])
         }
 
     }
+
+    QVector<QVector<float> > interpolation = shepard(listeP,listeD,colorMap);
+    //hardy(listeP,listeD);
+    colorMap->save("../CompteRendu/colormap.png");
+    /*-----------------------------------------------------------*/
+
+
+    /*--------------------COURBES ISO VALEURS--------------------*/
+
+
+    QImage *img = new QImage(N,N,QImage::Format_RGB32);
     float pas = (maxD-minD) / listeD.length();
     int i=0;
     ostringstream oss;
@@ -351,7 +362,33 @@ int main(int argc, char *argv[])
 
     /*---------------------EXPORT FORMAT KML---------------------*/
 
+    QFile file("../CompteRendu/res.kml");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        cout <<"erreur"<<endl;
+    }
 
+    QString path = "/../CompteRendu/colormap.png";
+
+
+    QTextStream out(&file);
+    out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+    out << "<kml xmlns=\"http://www.opengis.net/kml/2.2\">" << endl;
+    out << "  <Folder>" << endl;
+    out << "    <name>Ground Overlays</name>" << endl;
+    out << "    <GroundOverlay>" << endl;
+    out << "      <name>Large-scale overlay on terrain</name>" << endl;
+    out << "      <Icon>" << endl;
+    out << "        <href>" << path << "</href>" << endl;
+    out << "      </Icon>" << endl;
+    out << "      <LatLonBox>" << endl;
+    out << "        <north>" << pmax.getY() << "</north>" << endl;
+    out << "        <south>" << pmin.getY() << "</south>" << endl;
+    out << "        <east>" << pmax.getX() << "</east>" << endl;
+    out << "        <west>" << pmin.getX() << "</west>" << endl;
+    out << "      </LatLonBox>" << endl;
+    out << "    </GroundOverlay>" << endl;
+    out << "  </Folder>" << endl;
+    out << "</kml>" << endl;
     /*-----------------------------------------------------------*/
 
 
