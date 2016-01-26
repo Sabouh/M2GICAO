@@ -90,7 +90,6 @@ function c = mcQuadrique(x,y)
   // sorties 
   // c = [a,b,c] -> les coeficients de la quadrique obtenue, tels que y=ax^2+bx+c
   
-  // **** A MODIFIER/COMPLETER ****
   c = M';
   // ******************************
   
@@ -110,7 +109,6 @@ function c = mcCubique(x,y)
   // sorties 
   // c = [a,b,c,d] -> les coeficients de la cubique obtenue, tels que y=ax^3+bx^2+cx+d
   
-  // **** A MODIFIER/COMPLETER ****
   c = M';
   // ******************************
   

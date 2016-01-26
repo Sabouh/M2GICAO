@@ -7,28 +7,52 @@ function Crust(S)
   
   // ******************************
   
-  [T,C,r] = delaunay(S);
-  
   //Compute the Delaunay triangulation T
   
   //Compute the set C of the circumscribed circle assiociated to triangles T
+  [T,C,r] = delaunay(S);
+  
+  
+  //On retrouve sommets correspondant aux indices dans T
+  // et on met leur coordonnées ds une matrice ST
+  //Matrice STI se souvient de l'indice qui correspond à S pour chaque sommet de ST
+  
+  ST = [];
+  STI =[];
+  [lig,col] = size(T);
+  for i=1:lig
+      for j=1:col
+        ST((i-1)*col+j,:) =  S(T(i,j),:);
+        STI((i-1)*col+j,:) = T(i,j);
+      end
+  end
+  
+  
+  //S1 : T U C
+  S1 = [ST; C];
   
   //Compute the Delaunay triangulation D of the set of points T U C
-  S1 = [T C];
   [T1,C1,r] = delaunay(S1);
-  //CRUST = set of edges of D uniquely connected by points in P
-  //On veut prendre les arêtes compute que sur les triangles et pas les cercles
-  //donc les nT premiers
-  [ligne,col] = size(T);
-  CRUST = T1(1:ligne,:); 
- //R = []
+  
+  //On veut retrouver les arêtes des triangles de T1 
+  //mais on ne veut pas que les centres de cercles soient pris en compte 
+
+  [lig,col] = size(ST);
+  [ligne,colo] = size(T1);
+  
+  //Pour chaque triangle (chaque ligne de t1)
+  //Fonction aretes définie à la fin du fichier : 
+  //On parcourt les indices de ce triangle
+  // Si l'indice est plus grand que nT de ST (ca veut dire que c est cercle)
+  //on ne le prend pas en compte
+  //sinon on ajoute le lien entre les 2 autres si aucun ne comprend un cercle
+
+ 
  for i=1:ligne
-     R = [R ; [CRUST(i,col),CRUST(i,1)]]
-     for j=1:col-1
-        R = [R ; [CRUST(i,j),CRUST(i,j+1)]];
-     end
+     R = [R ; aretes(STI,T1(i,:),lig)];
  end
  
+ //fin
   
   // nouvelle figure 
   scf();
@@ -80,4 +104,32 @@ function test_crust(num_test)
     Crust(S);
     
   end // select
+endfunction
+
+//Renvoie les aretes d'un triangle
+// tels que les valeurs d'extremites de ces arêtes ne depassent pas N
+//
+
+function R=aretes(S,T,N)
+    
+    R = [];
+    a = T(1);
+    b = T(2);
+    c = T(3);
+    if ((a>=N & b>=N) |(a>=N & c>=N) | (b>=N & c>=N)) then
+        //Si 2 sur les 3 est supérieur à N on renvoie rien
+    else
+        //
+        if (a>=N) then
+            R = [R ; [S(b),S(c)]];
+        else
+          if (b >=N) then
+            R = [R ; [S(a),S(c)]];
+          else
+            R = [R ; [S(a),S(b)]];
+          end
+        end
+            
+    end
+    
 endfunction
