@@ -13,7 +13,8 @@ using namespace std;
 
 float noise = 0.5f;
 float sigma = 1.0f;
-QString filename ("test.jpg");
+//QString filename ("test.jpg");
+QString filename ("cute1.jpg");
 
 void loadParams(int argc, char *argv[]) {
   // sigma 
