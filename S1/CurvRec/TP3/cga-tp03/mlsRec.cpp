@@ -23,11 +23,9 @@ QImage MLSRec::apply(const QImage &img,float sigma) {
       if(colorMissing(current)) {
 	// set color as red 
        //current = Color(255.0f,0.0f,0.0f,255.0f);
-       // if(x>=3*sigma && x<img.width()-3*sigma && y>=3*sigma && y<img.height()-3*sigma ){
-            current = estimateColorPlane(img, x, y,sigma);
-       // }else{
-       //     current = Color(255.0f,0.0f,0.0f,255.0f);
-       // }
+        // current = estimateColorPlane(img, x, y,sigma);
+          sigma = estimateSigma(img,x,y);
+         current = estimateColorQuadric(img,x,y,sigma);
       }
       // set color in the new image
        setColor(newImg,x,y,current);
@@ -70,49 +68,45 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
   // ax + by + c = z
   // z being the value at pixel x,y (One MLS per channel then!)
   //voisinage où on regarde
-  float voisinage = 3*sigma;
-  int taille = (2*voisinage+1) *(2*voisinage+1);
+  float voisinage = 3*sigma ;
+
+  int N = 2*voisinage+1;
+  //Taille de  matrice A
+  int taille = N*N;
   MatrixXf A = MatrixXf::Zero(taille,3);
+  //Br vector B pour couleur rouge
   VectorXf Br = VectorXf::Zero(taille);
+  //Bg vector B pour couleur VERTE
   VectorXf Bg = VectorXf::Zero(taille);
+  //Bb vector B pour couleur Bleue
   VectorXf Bb = VectorXf::Zero(taille);
+  //Ba vector B pour  alpha
   VectorXf Ba = VectorXf::Zero(taille);
   Color c;
+
+  MatrixXf Weight =  MatrixXf::Zero(taille,taille);
+ float dist;
   for(int i=-voisinage;i<=voisinage;i++){
     if( (x+i>=0) && (x+i < img.width()) ){
         for(int j=-voisinage;j<=voisinage;j++){
             if( (y+j >=0) && (y+i <img.height()) ){
                 c = getColor(img,x+i,y+j);
                 if(!colorMissing(c)){
-                    Br(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j)) = c.red;
-                    Bg(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j)) = c.green;
-                    Bb(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j)) = c.blue;
-                    Ba(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j)) = c.alpha;
-                    A(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j),0) = x+i;
-                    A(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j),1) = y+j;
-                    A(( (voisinage+i)*(2*voisinage+1)) + (voisinage+j),2) = 1;
+                    Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
+                    Bg(( (voisinage+i)*N) + (voisinage+j)) = c.green;
+                    Bb(( (voisinage+i)*N) + (voisinage+j)) = c.blue;
+                    Ba(( (voisinage+i)*N) + (voisinage+j)) = c.alpha;
+                    A(( (voisinage+i)*N) + (voisinage+j),0) = x+i;
+                    A(( (voisinage+i)*N) + (voisinage+j),1) = y+j;
+                    A(( (voisinage+i)*N) + (voisinage+j),2) = 1;
+                    dist = (x-(x+i))*(x-(x+i)) + (y - (y+j))*(y - (y+j));
+                    Weight( ( (voisinage+i)*N) + (voisinage+j),( (voisinage+i)*N) + (voisinage+j)) = 1/(sigma*sqrt(2*M_PI)) * exp(-(dist)/(2*sigma*sigma));
                 }
             }
         }
     }
  }
 
-  MatrixXf Weight =  MatrixXf::Zero(taille,taille);
- float dist;
- for(int i=-voisinage;i<=voisinage;i++){
-     if( (x+i>=0) && (x+i < img.width()) ){
-        for(int j=-voisinage;j<=voisinage;j++){
-            if( (y+j >=0) && (y+i <img.height()) ){
-                c = getColor(img,x+i,y+j);
-                if(!colorMissing(c)){
-                    dist = (x-(x+i))*(x-(x+i)) + (y - (y+j))*(y - (y+j));
-                    Weight( ( (voisinage+i)*(2*voisinage+1)) + (voisinage+j),( (voisinage+i)*(2*voisinage+1)) + (voisinage+j)) = 1/(sigma*sqrt(2*M_PI)) * exp(-(dist)/(2*sigma*sigma));
-                }
-            }
-        }
-     }
-
- }
 
 
  MatrixXf At = A.transpose();
@@ -131,27 +125,27 @@ float vert= x*Xg(0,0)+y*Xg(1,0)+Xg(2,0);
 float bleu= x*Xb(0,0)+y*Xb(1,0)+Xb(2,0);
 float alpha= x*Xa(0,0)+y*Xa(1,0)+Xa(2,0);
 
-//cout <<"YAHOO"<<endl;
-if(rouge <0)
+
+if(rouge <0.f)
     rouge = 0.0f;
 if(rouge >255.0)
     rouge = 255.0f;
 
-if(vert <0)
+if(vert <0.f)
    vert = 0.0f;
-if(vert >255.0)
+if(vert >255.0f)
     vert = 255.0f;
 
-if(bleu <0)
+if(bleu <0.f)
     bleu = 0.0f;
 if(bleu >255.0)
     bleu = 255.0f;
 
-if(alpha <0)
+if(alpha <0.f)
     alpha = 0.0f;
 if(alpha >255.0)
     alpha = 255.0f;
-//cout <<"WHAT"<<endl;
+
   return Color(rouge,vert,bleu,alpha);
 }
 
@@ -160,14 +154,120 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
   // ax^2 + by^2 + cxy + dx + ey + f = z
   // z being the value at pixel x,y (One MLS per channel then!)
 
+    float voisinage = 3*sigma ;
+
+    int N = 2*voisinage+1;
+    //Taille de  matrice A
+    int taille = N*N;
+    MatrixXf A = MatrixXf::Zero(taille,6);
+    //Br vector B pour couleur rouge
+    VectorXf Br = VectorXf::Zero(taille);
+    //Bg vector B pour couleur VERTE
+    VectorXf Bg = VectorXf::Zero(taille);
+    //Bb vector B pour couleur Bleue
+    VectorXf Bb = VectorXf::Zero(taille);
+    //Ba vector B pour  alpha
+    VectorXf Ba = VectorXf::Zero(taille);
+    Color c;
+    //Matrice de poids
+    MatrixXf Weight =  MatrixXf::Zero(taille,taille);
+   float dist;
+
+    for(int i=-voisinage;i<=voisinage;i++){
+      if( (x+i>=0) && (x+i < img.width()) ){
+          for(int j=-voisinage;j<=voisinage;j++){
+              if( (y+j >=0) && (y+i <img.height()) ){
+                  c = getColor(img,x+i,y+j);
+                  if(!colorMissing(c)){
+                      Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
+                      Bg(( (voisinage+i)*N) + (voisinage+j)) = c.green;
+                      Bb(( (voisinage+i)*N) + (voisinage+j)) = c.blue;
+                      Ba(( (voisinage+i)*N) + (voisinage+j)) = c.alpha;
+                      A(( (voisinage+i)*N) + (voisinage+j),0) = pow(x+i,2);//x²
+                      A(( (voisinage+i)*N) + (voisinage+j),1) = pow(y+j,2);//y²
+                      A(( (voisinage+i)*N) + (voisinage+j),2) = (x+i)*(y+j);//xy
+                      A(( (voisinage+i)*N) + (voisinage+j),3) = x+i;//x
+                      A(( (voisinage+i)*N) + (voisinage+j),4) = y+j;//y
+                      A(( (voisinage+i)*N) + (voisinage+j),5) = 1;//1
+                      dist = (x-(x+i))*(x-(x+i)) + (y - (y+j))*(y - (y+j));
+                      Weight( ( (voisinage+i)*N) + (voisinage+j),( (voisinage+i)*N) + (voisinage+j)) = 1/(sigma*sqrt(2*M_PI)) * exp(-(dist)/(2*sigma*sigma));
+                  }
+              }
+          }
+      }
+   }
+
+   MatrixXf At = A.transpose();
+   MatrixXf AtW = At*(Weight);
+   MatrixXf AtWA = (At*(Weight))*A;
+   MatrixXf IAtWA = AtWA.inverse();
+
+
+
+   MatrixXf Xr = AtWA.ldlt().solve(A.transpose()*Weight*Br);
+   MatrixXf Xg = AtWA.ldlt().solve(A.transpose()*Weight*Bg);
+   MatrixXf Xb = AtWA.ldlt().solve(A.transpose()*Weight*Bb);
+   MatrixXf Xa = AtWA.ldlt().solve(A.transpose()*Weight*Ba);
+
+ //  MatrixXf Xr = IAtWA*AtW*Br;
+ //  MatrixXf Xg = IAtWA*AtW*Bg;
+  // MatrixXf Xb = IAtWA*AtW*Bb;
+  // MatrixXf Xa = IAtWA*AtW*Ba;
+
+  float rouge = (x*x*Xr(0,0)) + (y*y*Xr(1,0)) + (x*y*Xr(2,0)) + (x*Xr(3,0)) + (y*Xr(4,0)) +Xr(5,0);
+  float vert= x*x*Xg(0,0) + y*y*Xg(1,0) + x*y*Xg(2,0) + x*Xg(3,0) + y*Xg(4,0) + Xg(5,0);
+  float bleu= x*x*Xb(0,0) + y*y*Xb(1,0) + x*y*Xb(2,0) + x*Xb(3,0) + y*Xb(4,0) + Xb(5,0);
+  float alpha= x*x*Xa(0,0)  + y*y*Xa(1,0) + x*y*Xa(2,0) + x*Xa(3,0) + y*Xa(4,0) + Xa(5,0);
+
+
+  if(rouge <0.f)
+      rouge = 0.0f;
+  if(rouge >255.0)
+      rouge = 255.0f;
+
+  if(vert <0.f)
+     vert = 0.0f;
+  if(vert >255.0f)
+      vert = 255.0f;
+
+  if(bleu <0.f)
+      bleu = 0.0f;
+  if(bleu >255.0)
+      bleu = 255.0f;
+
+  if(alpha <0.f)
+      alpha = 0.0f;
+  if(alpha >255.0)
+      alpha = 255.0f;
+
+    return Color(rouge,vert,bleu,alpha);
   // TODO
-  return Color(0.0f,0.0f,0.0f,255.0f);
 }
 
 
 float MLSRec::estimateSigma(const QImage &img,int x,int y) {
   // estimate sigma at x,y depending on the positions of nearest valid neighbors
-  
-  // TODO 
-  return 2.0f;
+    /*PREND TROP DE TEMPS*/
+  float sigma = 1.0f;
+  int voisinage = 3*sigma;
+  Color c ;
+  int nb_neigh =0;
+  int loop = 0;
+  while(loop < 10 && nb_neigh < voisinage+1){
+      nb_neigh=0;
+      sigma = sigma +1.0f;
+      voisinage = 3*sigma;
+      for(int i=-voisinage;i<= voisinage;i++){
+          for(int j=-voisinage;i<=voisinage;i++){
+              c = getColor(img,x+i,y+j);
+                if(!colorMissing(c)){
+                    nb_neigh++;
+                }
+
+          }
+      }
+      loop++;
+  }
+
+  return sigma;
 }
