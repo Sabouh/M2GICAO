@@ -24,7 +24,7 @@ QImage MLSRec::apply(const QImage &img,float sigma) {
 	// set color as red 
        //current = Color(255.0f,0.0f,0.0f,255.0f);
         // current = estimateColorPlane(img, x, y,sigma);
-          sigma = estimateSigma(img,x,y);
+         sigma = estimateSigma(img,x,y);
          current = estimateColorQuadric(img,x,y,sigma);
       }
       // set color in the new image
@@ -247,31 +247,40 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
 
 float MLSRec::estimateSigma(const QImage &img,int x,int y) {
   // estimate sigma at x,y depending on the positions of nearest valid neighbors
-    /*PREND TROP DE TEMPS*/
-  float sigma = 1.0f;
-  int voisinage = 3*sigma;
-  Color c ;
-  int nb_neigh =0;
-  int loop = 0;
+    float sigma =1.0f;
+    int voisinage = 3*sigma;
+    Color c ;
+    //nb de voisins existants
+    int nb_neigh =0;
+    int loop = 3;
 
+    /* nombre de voisins parcourus (voisinage+1)*(voisinage+1)*/
+    /* On veut avoir au minimum ((voisinage+1)*(voisinage+1))/ 2 voisins valides*/
+    /* ce qui correspond à la moitié*/
+    while(loop <= 23 && nb_neigh < (voisinage/2) ){
+        nb_neigh=0;
+        //On augmente sigma d'un tiers pour que le voisinage augmente de 1
+        sigma = loop*(1.0f/3.0f);
+        voisinage = 3*sigma;
 
+        for(int i=-voisinage;i<= voisinage;i++){
+            if( (x+i>=0) && (x+i < img.width()) ){
+                for(int j=-voisinage;i<=voisinage;i++){
+                    if( (y+j >=0) && (y+j <img.height()) ){
+                        c = getColor(img,x+i,y+j);
+                          if(!colorMissing(c)){
+                              nb_neigh++;
+                          }
+                          if(nb_neigh >= (voisinage/2)){
+                              return sigma;
+                          }
+                    }
 
-
-
-  while(loop < 4 && nb_neigh < voisinage+1){
-      nb_neigh=0;
-      sigma = sigma +1.0f;
-      voisinage = 3*sigma;
-      for(int i=-voisinage;i<= voisinage;i++){
-          for(int j=-voisinage;i<=voisinage;i++){
-              c = getColor(img,x+i,y+j);
-                if(!colorMissing(c)){
-                    nb_neigh++;
                 }
-          }
-      }
-      loop++;
-  }
+            }
+        }
+        loop++;
+    }
 
   return sigma;
 }
