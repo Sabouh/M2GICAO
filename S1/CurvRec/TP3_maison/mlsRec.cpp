@@ -8,54 +8,54 @@ using namespace Eigen;
 QImage MLSRec::apply(const QImage &img,float sigma) {
 
   // TODO apply weighted least squares on each pixel of the input image
-  // example of image manipulation using Qt: 
+  // example of image manipulation using Qt:
 
-  // copy input 
-  QImage newImg = img; 
+  // copy input
+  QImage newImg = img;
 
-  // iterate eover pixels 
+  // iterate eover pixels
   for(int x=0;x<img.width();++x) {
     for(int y=0;y<img.height();++y) {
       // get color at x,y
       Color current = getColor(img,x,y);
-      
+
       // check if this color is missing in the image
       if(colorMissing(current)) {
-	// set color as red 
+    // set color as red
        //current = Color(255.0f,0.0f,0.0f,255.0f);
-        // current = estimateColorPlane(img, x, y,sigma);
-          sigma = estimateSigma(img,x,y);
+          //sigma = estimateSigma(img,x,y);
          current = estimateColorQuadric(img,x,y,sigma);
+         // current = estimateColorPlane(img, x, y,sigma);
       }
       // set color in the new image
        setColor(newImg,x,y,current);
     }
 
-    // show progression 
+    // show progression
     if(!(x%10))
       cout << "MLS: " << (int)(((float)x/(float)(img.width()-2))*100.0f) << " percent done..." << '\r' << flush;
   }
 
 
   // example of matrix manip using Eigen:
-  
+
   // 0 matrix with 4 rows, 3 columns
   MatrixXf M = MatrixXf::Zero(4,3);
-  
+
   // set row 1 and column 3 to 5.0f
   M(0,2) = 5.0f;
-  
-  // transposed matrix 
+
+  // transposed matrix
   MatrixXf T = M.transpose();
-  
-  // multiplication 
+
+  // multiplication
   MatrixXf MT = M*T;
 
   // matrix inversion
   MatrixXf MTi = MT.inverse();
 
   // vector of size 4
-  VectorXf v = VectorXf::Zero(4); 
+  VectorXf v = VectorXf::Zero(4);
 
   // matrix vector multiplication
   VectorXf Mv = MTi*v;
@@ -64,7 +64,7 @@ QImage MLSRec::apply(const QImage &img,float sigma) {
 }
 
 MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sigma) {
-  // estimate (and eval) a,b,c such that 
+  // estimate (and eval) a,b,c such that
   // ax + by + c = z
   // z being the value at pixel x,y (One MLS per channel then!)
   //voisinage où on regarde
@@ -83,13 +83,14 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
   //Ba vector B pour  alpha
   VectorXf Ba = VectorXf::Zero(taille);
   Color c;
-
+  //Weight matrice de poids
   MatrixXf Weight =  MatrixXf::Zero(taille,taille);
  float dist;
+
   for(int i=-voisinage;i<=voisinage;i++){
     if( (x+i>=0) && (x+i < img.width()) ){
         for(int j=-voisinage;j<=voisinage;j++){
-            if( (y+j >=0) && (y+i <img.height()) ){
+            if( (y+j >=0) && (y+j <img.height()) ){
                 c = getColor(img,x+i,y+j);
                 if(!colorMissing(c)){
                     Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
@@ -108,7 +109,7 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
  }
 
 
-
+/* */
  MatrixXf At = A.transpose();
  MatrixXf AtW = At*(Weight);
  MatrixXf AtWA = (At*(Weight))*A;
@@ -120,12 +121,13 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
  MatrixXf Xb = IAtWA*AtW*Bb;
  MatrixXf Xa = IAtWA*AtW*Ba;
 
+ /*On calcule les couleurs */
 float rouge = x*Xr(0,0)+y*Xr(1,0)+Xr(2,0);
 float vert= x*Xg(0,0)+y*Xg(1,0)+Xg(2,0);
 float bleu= x*Xb(0,0)+y*Xb(1,0)+Xb(2,0);
 float alpha= x*Xa(0,0)+y*Xa(1,0)+Xa(2,0);
 
-
+/*On passe les couleurs entre 0 et 255*/
 if(rouge <0.f)
     rouge = 0.0f;
 if(rouge >255.0)
@@ -149,8 +151,15 @@ if(alpha >255.0)
   return Color(rouge,vert,bleu,alpha);
 }
 
+
+/*Observations :
+ Ici, l'estimation est moins efficace que la precedente
+ Il faudrait realiser cette estimation sur le resultat jusqu'à avoir un resultat qui converge vers une image sans bruit
+ Peut être que cet algo serait plus efficace sur une surface
+*/
+
 MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float sigma) {
-  // estimate (and eval) a,b,c,d,e,f such that 
+  // estimate (and eval) a,b,c,d,e,f such that
   // ax^2 + by^2 + cxy + dx + ey + f = z
   // z being the value at pixel x,y (One MLS per channel then!)
 
@@ -176,7 +185,7 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
     for(int i=-voisinage;i<=voisinage;i++){
       if( (x+i>=0) && (x+i < img.width()) ){
           for(int j=-voisinage;j<=voisinage;j++){
-              if( (y+j >=0) && (y+i <img.height()) ){
+              if( (y+j >=0) && (y+j <img.height()) ){
                   c = getColor(img,x+i,y+j);
                   if(!colorMissing(c)){
                       Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
@@ -201,7 +210,12 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
    MatrixXf AtW = At*(Weight);
    MatrixXf AtWA = (At*(Weight))*A;
    MatrixXf IAtWA = AtWA.inverse();
-
+/*
+   MatrixXf Xr = IAtWA*AtW*Br;
+   MatrixXf Xg = IAtWA*AtW*Bg;
+   MatrixXf Xb = IAtWA*AtW*Bb;
+   MatrixXf Xa = IAtWA*AtW*Ba;
+*/
 
 
    MatrixXf Xr = AtWA.ldlt().solve(A.transpose()*Weight*Br);
@@ -209,17 +223,15 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
    MatrixXf Xb = AtWA.ldlt().solve(A.transpose()*Weight*Bb);
    MatrixXf Xa = AtWA.ldlt().solve(A.transpose()*Weight*Ba);
 
- //  MatrixXf Xr = IAtWA*AtW*Br;
- //  MatrixXf Xg = IAtWA*AtW*Bg;
-  // MatrixXf Xb = IAtWA*AtW*Bb;
-  // MatrixXf Xa = IAtWA*AtW*Ba;
 
+   /*On calcule les couleurs */
   float rouge = (x*x*Xr(0,0)) + (y*y*Xr(1,0)) + (x*y*Xr(2,0)) + (x*Xr(3,0)) + (y*Xr(4,0)) +Xr(5,0);
   float vert= x*x*Xg(0,0) + y*y*Xg(1,0) + x*y*Xg(2,0) + x*Xg(3,0) + y*Xg(4,0) + Xg(5,0);
   float bleu= x*x*Xb(0,0) + y*y*Xb(1,0) + x*y*Xb(2,0) + x*Xb(3,0) + y*Xb(4,0) + Xb(5,0);
   float alpha= x*x*Xa(0,0)  + y*y*Xa(1,0) + x*y*Xa(2,0) + x*Xa(3,0) + y*Xa(4,0) + Xa(5,0);
 
 
+  /*On passe les couleurs entre 0 et 255*/
   if(rouge <0.f)
       rouge = 0.0f;
   if(rouge >255.0)
@@ -241,37 +253,57 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
       alpha = 255.0f;
 
     return Color(rouge,vert,bleu,alpha);
-  // TODO
 }
 
 
+/*Observation :
+ *On obtient des reconstructions d'image bien plus rapides, même avec du très grand bruit 0.8f
+ *pour des resultats satisfaisants avec EstimationColorPlane
+ *
+ * Par contre, avec l'estimation quadrique , cela prend beaucoup de temps .
+ *
+*/
 float MLSRec::estimateSigma(const QImage &img,int x,int y) {
   // estimate sigma at x,y depending on the positions of nearest valid neighbors
-    /*PREND TROP DE TEMPS*/
-  float sigma = 1.0f;
+
+  float sigma =1.0f;
   int voisinage = 3*sigma;
   Color c ;
+  //nb de voisins existants
   int nb_neigh =0;
-  int loop = 0;
+  int loop = 3;
 
-
-
-
-
-  while(loop < 4 && nb_neigh < voisinage+1){
+  /* nombre de voisins parcourus (voisinage+1)*(voisinage+1)*/
+  /* On veut avoir au minimum ((voisinage+1)*(voisinage+1))/ 2 voisins valides*/
+  /* ce qui correspond à la moitié*/
+  while(loop <= 23 && nb_neigh < (voisinage/2) ){
       nb_neigh=0;
-      sigma = sigma +1.0f;
+      //On augmente sigma d'un tiers pour que le voisinage augmente de 1
+      sigma = loop*(1.0f/3.0f);
       voisinage = 3*sigma;
+
       for(int i=-voisinage;i<= voisinage;i++){
-          for(int j=-voisinage;i<=voisinage;i++){
-              c = getColor(img,x+i,y+j);
-                if(!colorMissing(c)){
-                    nb_neigh++;
-                }
+          if( (x+i>=0) && (x+i < img.width()) ){
+              for(int j=-voisinage;i<=voisinage;i++){
+                  if( (y+j >=0) && (y+j <img.height()) ){
+                      c = getColor(img,x+i,y+j);
+                        if(!colorMissing(c)){
+                            nb_neigh++;
+                        }
+                        if(nb_neigh >= (voisinage/2)){
+                            return sigma;
+                        }
+                  }
+
+              }
           }
       }
       loop++;
   }
+  //cout<<"nb_neigh "<<nb_neigh<<endl;
+ // cout<<"voisinage "<<voisinage<<endl;
+ // cout<<"sigma "<<sigma<<endl;
+ // cout<<"----------------"<<endl;
 
   return sigma;
 }
