@@ -25,7 +25,7 @@ QImage MLSRec::apply(const QImage &img,float sigma) {
        //current = Color(255.0f,0.0f,0.0f,255.0f);
         // current = estimateColorPlane(img, x, y,sigma);
          sigma = estimateSigma(img,x,y);
-         current = estimateColorQuadric(img,x,y,sigma);
+         current = estimateColorPlane(img,x,y,sigma);
       }
       // set color in the new image
        setColor(newImg,x,y,current);
@@ -86,10 +86,11 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
 
   MatrixXf Weight =  MatrixXf::Zero(taille,taille);
  float dist;
+ int nb=0;
   for(int i=-voisinage;i<=voisinage;i++){
     if( (x+i>=0) && (x+i < img.width()) ){
         for(int j=-voisinage;j<=voisinage;j++){
-            if( (y+j >=0) && (y+i <img.height()) ){
+            if( (y+j >=0) && (y+j <img.height()) ){
                 c = getColor(img,x+i,y+j);
                 if(!colorMissing(c)){
                     Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
@@ -101,13 +102,12 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
                     A(( (voisinage+i)*N) + (voisinage+j),2) = 1;
                     dist = (x-(x+i))*(x-(x+i)) + (y - (y+j))*(y - (y+j));
                     Weight( ( (voisinage+i)*N) + (voisinage+j),( (voisinage+i)*N) + (voisinage+j)) = 1/(sigma*sqrt(2*M_PI)) * exp(-(dist)/(2*sigma*sigma));
+                    nb++;
                 }
             }
         }
     }
  }
-
-
 
  MatrixXf At = A.transpose();
  MatrixXf AtW = At*(Weight);
@@ -120,10 +120,10 @@ MLSRec::Color MLSRec::estimateColorPlane(const QImage &img,int x,int y,float sig
  MatrixXf Xb = IAtWA*AtW*Bb;
  MatrixXf Xa = IAtWA*AtW*Ba;
 
-float rouge = x*Xr(0,0)+y*Xr(1,0)+Xr(2,0);
-float vert= x*Xg(0,0)+y*Xg(1,0)+Xg(2,0);
-float bleu= x*Xb(0,0)+y*Xb(1,0)+Xb(2,0);
-float alpha= x*Xa(0,0)+y*Xa(1,0)+Xa(2,0);
+ float rouge = x*Xr(0,0)+y*Xr(1,0)+Xr(2,0);
+ float vert= x*Xg(0,0)+y*Xg(1,0)+Xg(2,0);
+ float bleu= x*Xb(0,0)+y*Xb(1,0)+Xb(2,0);
+ float alpha= x*Xa(0,0)+y*Xa(1,0)+Xa(2,0);
 
 
 if(rouge <0.f)
@@ -146,7 +146,13 @@ if(alpha <0.f)
 if(alpha >255.0)
     alpha = 255.0f;
 
-  return Color(rouge,vert,bleu,alpha);
+ if(nb == 0){
+    return Color(255.0f,255.0f,255.0f,255.0f);
+ }
+
+ if(rouge < std::numeric_limits<float>::infinity() && rouge > -std::numeric_limits<float>::infinity() ){
+     return Color(rouge,vert,bleu,alpha);
+ }
 }
 
 MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float sigma) {
@@ -172,11 +178,12 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
     //Matrice de poids
     MatrixXf Weight =  MatrixXf::Zero(taille,taille);
    float dist;
+   int nb=0;
 
     for(int i=-voisinage;i<=voisinage;i++){
       if( (x+i>=0) && (x+i < img.width()) ){
           for(int j=-voisinage;j<=voisinage;j++){
-              if( (y+j >=0) && (y+i <img.height()) ){
+              if( (y+j >=0) && (y+j <img.height()) ){
                   c = getColor(img,x+i,y+j);
                   if(!colorMissing(c)){
                       Br(( (voisinage+i)*N) + (voisinage+j)) = c.red;
@@ -191,61 +198,103 @@ MLSRec::Color MLSRec::estimateColorQuadric(const QImage &img,int x,int y,float s
                       A(( (voisinage+i)*N) + (voisinage+j),5) = 1;//1
                       dist = (x-(x+i))*(x-(x+i)) + (y - (y+j))*(y - (y+j));
                       Weight( ( (voisinage+i)*N) + (voisinage+j),( (voisinage+i)*N) + (voisinage+j)) = 1/(sigma*sqrt(2*M_PI)) * exp(-(dist)/(2*sigma*sigma));
+                      nb++;
                   }
               }
           }
       }
    }
 
+
    MatrixXf At = A.transpose();
    MatrixXf AtW = At*(Weight);
    MatrixXf AtWA = (At*(Weight))*A;
    MatrixXf IAtWA = AtWA.inverse();
-
-
 
    MatrixXf Xr = AtWA.ldlt().solve(A.transpose()*Weight*Br);
    MatrixXf Xg = AtWA.ldlt().solve(A.transpose()*Weight*Bg);
    MatrixXf Xb = AtWA.ldlt().solve(A.transpose()*Weight*Bb);
    MatrixXf Xa = AtWA.ldlt().solve(A.transpose()*Weight*Ba);
 
- //  MatrixXf Xr = IAtWA*AtW*Br;
- //  MatrixXf Xg = IAtWA*AtW*Bg;
-  // MatrixXf Xb = IAtWA*AtW*Bb;
-  // MatrixXf Xa = IAtWA*AtW*Ba;
-
-  float rouge = (x*x*Xr(0,0)) + (y*y*Xr(1,0)) + (x*y*Xr(2,0)) + (x*Xr(3,0)) + (y*Xr(4,0)) +Xr(5,0);
-  float vert= x*x*Xg(0,0) + y*y*Xg(1,0) + x*y*Xg(2,0) + x*Xg(3,0) + y*Xg(4,0) + Xg(5,0);
-  float bleu= x*x*Xb(0,0) + y*y*Xb(1,0) + x*y*Xb(2,0) + x*Xb(3,0) + y*Xb(4,0) + Xb(5,0);
-  float alpha= x*x*Xa(0,0)  + y*y*Xa(1,0) + x*y*Xa(2,0) + x*Xa(3,0) + y*Xa(4,0) + Xa(5,0);
+   float rouge = (x*x*Xr(0,0)) + (y*y*Xr(1,0)) + (x*y*Xr(2,0)) + (x*Xr(3,0)) + (y*Xr(4,0)) +Xr(5,0);
+   float vert= x*x*Xg(0,0) + y*y*Xg(1,0) + x*y*Xg(2,0) + x*Xg(3,0) + y*Xg(4,0) + Xg(5,0);
+   float bleu= x*x*Xb(0,0) + y*y*Xb(1,0) + x*y*Xb(2,0) + x*Xb(3,0) + y*Xb(4,0) + Xb(5,0);
+   float alpha= x*x*Xa(0,0)  + y*y*Xa(1,0) + x*y*Xa(2,0) + x*Xa(3,0) + y*Xa(4,0) + Xa(5,0);
 
 
-  if(rouge <0.f)
+  if(rouge < 0.f)
       rouge = 0.0f;
-  if(rouge >255.0)
+  if(rouge > 255.0)
       rouge = 255.0f;
 
-  if(vert <0.f)
+  if(vert < 0.f)
      vert = 0.0f;
-  if(vert >255.0f)
+  if(vert > 255.0f)
       vert = 255.0f;
 
-  if(bleu <0.f)
+  if(bleu < 0.f)
       bleu = 0.0f;
-  if(bleu >255.0)
+  if(bleu > 255.0)
       bleu = 255.0f;
 
-  if(alpha <0.f)
+  if(alpha < 0.f)
       alpha = 0.0f;
-  if(alpha >255.0)
+  if(alpha > 255.0)
       alpha = 255.0f;
 
-    return Color(rouge,vert,bleu,alpha);
+  if(nb = 0){
+      return Color(255.0f,255.0f,255.0f,255.0f);
+  }
+  if(rouge < std::numeric_limits<float>::infinity() && rouge > -std::numeric_limits<float>::infinity() ){
+      return Color(rouge,vert,bleu,alpha);
+  }
   // TODO
 }
 
 
 float MLSRec::estimateSigma(const QImage &img,int x,int y) {
+    // estimate sigma at x,y depending on the positions of nearest valid neighbors
+      float sigma =1.0f;
+      int voisinage = 3*sigma;
+      Color c ;
+      //nb de voisins existants
+      int nb_neigh =0;
+      int loop = 3;
+
+      /* nombre de voisins parcourus (voisinage+1)*(voisinage+1)*/
+      /* On veut avoir au minimum ((voisinage+1)*(voisinage+1))/ 2 voisins valides*/
+      /* ce qui correspond à la moitié*/
+      while(loop <= 25 && nb_neigh < voisinage/2 ){
+          nb_neigh=0;
+          //On augmente sigma d'un tiers pour que le voisinage augmente de 1
+          sigma = loop*(1.0f/3.0f);
+          voisinage = 3*sigma;
+
+          for(int i=-voisinage;i<= voisinage;i++){
+              if( (x+i>=0) && (x+i < img.width()) ){
+                  for(int j=-voisinage;i<=voisinage;i++){
+                      if( (y+j >=0) && (y+j <img.height()) ){
+                          c = getColor(img,x+i,y+j);
+                            if(!colorMissing(c)){
+                                nb_neigh++;
+                            }
+                            if(nb_neigh >= voisinage/2){
+                                return sigma;
+                            }
+                      }
+
+                  }
+              }
+          }
+          loop++;
+      }
+
+    return sigma;
+}
+
+
+
+float MLSRec::estimateSigma2(const QImage &img,int x,int y) {
   // estimate sigma at x,y depending on the positions of nearest valid neighbors
     float sigma =1.0f;
     int voisinage = 3*sigma;
@@ -257,7 +306,7 @@ float MLSRec::estimateSigma(const QImage &img,int x,int y) {
     /* nombre de voisins parcourus (voisinage+1)*(voisinage+1)*/
     /* On veut avoir au minimum ((voisinage+1)*(voisinage+1))/ 2 voisins valides*/
     /* ce qui correspond à la moitié*/
-    while(loop <= 23 && nb_neigh < (voisinage/2) ){
+    while(loop <= 43 && nb_neigh < (voisinage/2) ){
         nb_neigh=0;
         //On augmente sigma d'un tiers pour que le voisinage augmente de 1
         sigma = loop*(1.0f/3.0f);

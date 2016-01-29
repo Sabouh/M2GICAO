@@ -44,6 +44,7 @@ class MLSRec {
   static Color estimateColorPlane(const QImage &img,int x,int y,float sigma);
   static Color estimateColorQuadric(const QImage &img,int x,int y,float sigma);
   static float estimateSigma(const QImage &img,int x,int y);
+  static float estimateSigma2(const QImage &img,int x,int y);
 };
 
 #endif // MLS_REC
