@@ -17,11 +17,15 @@ title('data : FB sinogramme ')
 % data weighting
 % psiM est le demi fan angle
 % pas (psiH): rotation à faire pour passer d'un detecteur à un autre
+% psi : liste de tous les angles compris entre -psiM et psiM
 R=3;
 psiM=asin(1./R);
 pas = 2*psiM/(ndet-1);
-%psiiiiiiii
+%on découpe l'espace [-demi fan angle ; demi fan angle] selon le nb de
+%detecteurs
 psi = -psiM:pas:psiM;
+% table de projections
+proj = linspace(0,2*pi,(2*pi)/nproj);
 
 weight = R*cos(psi);
 Wdata = zeros(nproj,ndet);
@@ -52,23 +56,41 @@ imagesc(filteredwdata);
 %backprojection
 
 N=200;
-res = 0;
-h = 2/Q;
+res = 200;
+hdet = 2/ndet;
 mu = zeros(N,N);
 
 for i= 1:N
-	x = i/100 -1;
+	x = i/res*2 -1;
 	for j= 1:N
-		y = j/100 -1;
-        for k =1:nproj
-			%%%%%%-alphak alphak
-            
-			
+		y = j/res*2 -1;
+        %si dans cercle 
+        if (x^2 + y^2 < 1)    
+            %pour toute projection
+            for k =1:nproj
+                %compute Psi x_ijt
+                %changement de base
+                xteta = x*cos(psi(k)) + y*sin(proj(k));
+                yzeta =  x*(-sin(proj(k))) + y*cos(psi(k));
+                
+                %%                
+                psi = atan(yzeta/xteta);
+                
+                % l = 1 + floor(Psi + Ppsim/hPsi)
+                l = 1 + floor( psi +psiM /pas);
+                
+                
+                %mu(i,j) = mu(i;j) +
+                %linearInterpo(filtererWdata,l,l+1,PSix_ijt)/|x - psiT|²        
+                %on interpole 
+                interpol = ( filteredwdata(k,l)*(1 - ?)) + (filteredwdata(k,l+1))*?;         
+                mu(i,j) = mu(i,j) + interpol ;
+            end
 		end
 	end
 end
 
 
-figure(3);
+figure;
 colormap(gray);
-%imagesc(filteredwdata);
+imagesc(mu);

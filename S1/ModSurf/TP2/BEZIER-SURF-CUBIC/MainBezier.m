@@ -42,7 +42,7 @@ end
 % La dimension de B(:,:,:,k) est 4 x 4 x 3, i.e., 16 points de controle
 % a 3 coordonnees (x,y,z)
 
-% B(:,:,1,k): x-coordonnes des points de controle du patch k comme matrice 4 x 4
+% B(:,:,1,k): x-coordonnesv des points de controle du patch k comme matrice 4 x 4
 % B(:,:,2,k): y-coordonnes des points de controle du patch k comme matrice 4 x 4
 % B(:,:,3,k): z-coordonnes des points de controle du patch k comme matrice 4 x 4
 
@@ -111,7 +111,7 @@ end
 u=linspace(0,1,num_n); v=u;  %parametrisation uniforme (num_n+1)x (num_n+1) valeurs de parametre
 
 for k=1:np
-   K(:,:,:,k)=curvPlot(S(:,:,:,k),N(:,:,:,k),u,v); %vecteurs normal du patch k
+   K(:,:,:,k)=curvPlot(S(:,:,:,k),u,v); %vecteurs normal du patch k
 end
 
 % --------------------------------------
