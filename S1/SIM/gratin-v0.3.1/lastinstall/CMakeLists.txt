@@ -1,0 +1,21 @@
+if(APPLE OR WIN32)
+    set(sfx "")
+    if(APPLE)
+        set(sfx ".app")
+    elseif(WIN32)
+        set(sfx ".exe")
+    endif()
+
+    set(exe "${GRATIN_DIR_NAME}${sfx}")
+
+    set(plugin_loc "")
+    get_property(jpeg_loc TARGET Qt5::QJpegPlugin PROPERTY LOCATION_RELEASE)
+    list(APPEND plugin_loc ${jpeg_loc})
+    get_property(tiff_loc TARGET Qt5::QTiffPlugin PROPERTY LOCATION_RELEASE)
+    list(APPEND plugin_loc ${tiff_loc})
+    get_property(svg_loc TARGET Qt5::QSvgPlugin PROPERTY LOCATION_RELEASE)
+    list(APPEND plugin_loc ${svg_loc})
+
+    include(DeployQt5)
+    install_qt5_executable("${exe}" "${plugin_loc}" "${libs}" )
+endif()

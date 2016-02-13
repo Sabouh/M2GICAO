@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="test.frag">test.frag</file>
+      <file alias="psbw_divergence.frag">shaders/psbw_divergence.frag</file>
+      <file alias="psbw_interpolate0.frag">shaders/psbw_interpolate0.frag</file>
+      <file alias="psbw_interpolate1.frag">shaders/psbw_interpolate1.frag</file>
+      <file alias="psbw_refine.frag">shaders/psbw_refine.frag</file>
+      <file alias="psbw_residual.frag">shaders/psbw_residual.frag</file>
+      <file alias="psbw_restrict.frag">shaders/psbw_restrict.frag</file>
+      <file alias="psbw.vert">shaders/psbw.vert</file>
+ </qresource>
+ </RCC>

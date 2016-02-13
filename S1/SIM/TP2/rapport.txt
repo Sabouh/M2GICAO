@@ -1,0 +1,4 @@
+3  plans Oxy Oxz Oyz
+1 Sphere
+Profondeur = t
+ normales + prof normales + prof normales + prof normales + prof normales + prof normales + prof

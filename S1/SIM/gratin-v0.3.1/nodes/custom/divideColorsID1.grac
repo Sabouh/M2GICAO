@@ -1,0 +1,81 @@
+<Gratin type="node">
+ <int name="majorVersion" val="0"/>
+ <int name="minorVersion" val="3"/>
+ <string name="coreHandleStringId" val="multiplyColorsID"/>
+ <uint name="coreHandleVersion" val="1"/>
+ <string name="nodeStringId-0" val="divideColorsID"/>
+ <uint name="nodeVersion-0" val="1"/>
+ <string name="nodeName-0" val="divideColors"/>
+ <string name="nodePath-0" val="Imaging/operators"/>
+ <string name="nodeDesc-0" val="Divide 2 images"/>
+ <string name="nodeHelp-0" val="Divide colors (RGB channels) between 2 images. &#xa;Does not impact the alpha channel (taken from the first input image). &#xa;Resulting colors are not clamped (might be less than 0 or greater than 1 depending on the operator). &#xa;Values of the second input images are clamped to an epsilon value to avoid dividing by 0. "/>
+ <uint name="nodeId-0" val="14"/>
+ <uint name="nodeGraphId-0" val="1"/>
+ <vector2f name="nodePos-0">
+  <float name="0" val="64.82"/>
+  <float name="1" val="-6352.87"/>
+ </vector2f>
+ <int name="nodeInputNameSize-0" val="2"/>
+ <int name="nodeOutputNameSize-0" val="1"/>
+ <string name="nodeInputName-0-0" val="img01"/>
+ <string name="nodeInputName-0-1" val="img02"/>
+ <string name="nodeOutputName-0-0" val="image"/>
+ <bool name="nodeHasWidget-0" val="1"/>
+ <IOData name="node-0">
+  <string name="genericGlslVersion" val="410"/>
+  <string name="genericNodeName" val="divideColors"/>
+  <bool name="genericUseVertex" val="0"/>
+  <bool name="genericUseTesselation" val="0"/>
+  <bool name="genericUseGeometry" val="0"/>
+  <bool name="genericUseFragment" val="1"/>
+  <int name="genericOutFilter" val="9729"/>
+  <int name="genericOutWrap" val="33071"/>
+  <bool name="genericUseDepthTest" val="0"/>
+  <bool name="genericUseBlending" val="0"/>
+  <uint name="genericDepthFunc" val="513"/>
+  <uint name="genericBlendSrc" val="1"/>
+  <uint name="genericBlendDst" val="0"/>
+  <vector4f name="genericBackground">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+   <float name="2" val="0"/>
+   <float name="3" val="0"/>
+  </vector4f>
+  <string name="genericVertHead" val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D img01;&#xa;uniform sampler2D img02;&#xa;"/>
+  <string name="genericVertBody" val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;"/>
+  <string name="genericFragHead" val="#version 410&#xa;&#xa;layout(location = 0) out vec4 image;&#xa;uniform sampler2D img01;&#xa;uniform sampler2D img02;&#xa;"/>
+  <string name="genericFragBody" val="in vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;const float eps = 1e-15;&#xa;&#xa;&#x9;vec4 col1 = texture(img01,texcoord);&#xa;&#x9;vec4 col2 = texture(img02,texcoord);&#xa;&#xa;&#x9;image.xyz = col1.xyz/max(col2.xyz,vec3(eps));&#xa;&#x9;image.w = col1.w;&#xa;}&#xa;"/>
+  <string name="genericTessCHead" val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D img01;&#xa;uniform sampler2D img02;&#xa;"/>
+  <string name="genericTessCBody" val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;"/>
+  <string name="genericTessEHead" val="#version 410&#xa;&#xa;uniform sampler2D img01;&#xa;uniform sampler2D img02;&#xa;"/>
+  <string name="genericTessEBody" val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;"/>
+  <string name="genericGeomHead" val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D img01;&#xa;uniform sampler2D img02;&#xa;"/>
+  <string name="genericGeomBody" val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}"/>
+  <vector2f name="genericTSize">
+   <float name="0" val="1"/>
+   <float name="1" val="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+  </vector2f>
+  <bool name="genericNeedMouse" val="0"/>
+  <bool name="genericNeedKeyboard" val="0"/>
+  <uint name="genericNbWidgets" val="0"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint name="nbChildren" val="0"/>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float name="0" val="56.32"/>
+  <float name="1" val="28.16"/>
+ </vector2f>
+ <vector2f name="nodeInputPos-0-1">
+  <float name="0" val="56.32"/>
+  <float name="1" val="28.16"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float name="0" val="56.32"/>
+  <float name="1" val="28.16"/>
+ </vector2f>
+</Gratin>

@@ -1,0 +1,273 @@
+<Gratin type="node">
+ <int name="majorVersion" val="0"/>
+ <int name="minorVersion" val="3"/>
+ <string name="coreHandleStringId" val="gbuffersGenericId"/>
+ <uint name="coreHandleVersion" val="1"/>
+ <string name="nodeStringId-0" val="PNTrianglesID"/>
+ <uint name="nodeVersion-0" val="1"/>
+ <string name="nodeName-0" val="PNTriangles"/>
+ <string name="nodePath-0" val="Geometry/"/>
+ <string name="nodeDesc-0" val="Curved PN Triangles [Vlachos et al. I3D 2001]"/>
+ <string name="nodeHelp-0" val="Implementation of the curved PN Triangle paper [Vlachos et al. I3D 2001].&#xa;Done and provided by Jonathan Dupuy: &#xa;http://onrendering.blogspot.fr/2011/12/tessellation-on-gpu-curved-pn-triangles.html"/>
+ <uint name="nodeId-0" val="0"/>
+ <uint name="nodeGraphId-0" val="0"/>
+ <vector2f name="nodePos-0">
+  <float name="0" val="0"/>
+  <float name="1" val="0"/>
+ </vector2f>
+ <int name="nodeInputNameSize-0" val="0"/>
+ <int name="nodeOutputNameSize-0" val="1"/>
+ <string name="nodeOutputName-0-0" val="tesselate"/>
+ <bool name="nodeHasWidget-0" val="1"/>
+ <IOData name="node-0">
+  <string name="filename" val="../../../data/objs/icosphere.obj"/>
+  <IOData name="camera">
+   <int name="projType" val="0"/>
+   <int name="rotType" val="0"/>
+   <vector2i name="viewport">
+    <int name="0" val="512"/>
+    <int name="1" val="512"/>
+   </vector2i>
+   <vector3f name="sceneCenter">
+    <float name="0" val="0"/>
+    <float name="1" val="-8.51495e-09"/>
+    <float name="2" val="-0.12152"/>
+   </vector3f>
+   <float name="sceneRadius" val="1.10521"/>
+   <float name="fovy" val="45"/>
+   <vector3f name="shift">
+    <float name="0" val="0"/>
+    <float name="1" val="0"/>
+    <float name="2" val="2.55528"/>
+   </vector3f>
+   <IOData name="trackball">
+    <quaternionf name="rotation">
+     <float name="0" val="1"/>
+     <float name="1" val="0"/>
+     <float name="2" val="0"/>
+     <float name="3" val="0"/>
+    </quaternionf>
+    <vector2f name="screenCenter">
+     <float name="0" val="256"/>
+     <float name="1" val="256"/>
+    </vector2f>
+    <float name="screenRadius" val="512"/>
+   </IOData>
+  </IOData>
+  <string name="genericGlslVersion" val="410"/>
+  <string name="genericNodeName" val="PNTriangles"/>
+  <bool name="genericUseVertex" val="1"/>
+  <bool name="genericUseTesselation" val="1"/>
+  <bool name="genericUseGeometry" val="1"/>
+  <bool name="genericUseFragment" val="1"/>
+  <int name="genericOutFilter" val="9729"/>
+  <int name="genericOutWrap" val="33071"/>
+  <bool name="genericUseDepthTest" val="1"/>
+  <bool name="genericUseBlending" val="0"/>
+  <uint name="genericDepthFunc" val="513"/>
+  <uint name="genericBlendSrc" val="1"/>
+  <uint name="genericBlendDst" val="0"/>
+  <vector4f name="genericBackground">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+   <float name="2" val="0"/>
+   <float name="3" val="0"/>
+  </vector4f>
+  <string name="genericVertHead" val="#version 410&#xa;&#xa;layout(location = 0) in vec3 inVertex;&#xa;layout(location = 1) in vec3 inNormal;&#xa;layout(location = 2) in vec3 inTangent;&#xa;layout(location = 3) in vec2 inTexcoord;&#xa;uniform float tessLevel;&#xa;uniform float tessAlpha;&#xa;uniform mat4 model;&#xa;uniform mat4 view;&#xa;uniform mat4 proj;&#xa;uniform float zmin;&#xa;uniform float zmax;&#xa;"/>
+  <string name="genericVertBody" val="layout(location = 0) out vec3 vtNormal;&#xa;layout(location = 1) out vec2 vtTexcoord;&#xa;&#xa;void main() {&#xa;&#x9;vtNormal  = inNormal;&#xa;&#x9;vtTexcoord = inTexcoord;&#xa;&#x9;gl_Position = vec4(inVertex,1);&#xa;}&#xa;"/>
+  <string name="genericFragHead" val="#version 410&#xa;&#xa;layout(location = 0) out vec4 tesselate;&#xa;uniform float tessLevel;&#xa;uniform float tessAlpha;&#xa;uniform mat4 model;&#xa;uniform mat4 view;&#xa;uniform mat4 proj;&#xa;uniform float zmin;&#xa;uniform float zmax;&#xa;"/>
+  <string name="genericFragBody" val="layout(location = 0) in vec3 gfNormal;&#xa;layout(location = 1) in vec2 gfTexcoord;&#xa;layout(location = 2) in vec3 gfFacetNormal;&#xa;layout(location = 3) in vec3 gfTriDistance;&#xa;&#xa;float amplify(float d, float scale, float offset) {&#xa;&#x9;//return 1.;&#xa;&#x9;d = scale * d + offset;&#xa;&#x9;d = clamp(d, 0, 1);&#xa;&#x9;d = 1 - exp2(-2*d*d);&#xa;&#x9;return d;&#xa;}&#xa;&#xa;void main() {&#xa;&#x9;if(gfNormal==vec3(0.)) {&#xa;&#x9;&#x9;tesselate = vec4(0.);&#xa;&#x9;&#x9;return;&#xa;&#x9;}&#xa;&#xa;&#x9;mat4 mdv    = view*model;&#xa;&#x9;mat4 mvp    = proj*mdv;&#xa;&#xa;&#x9;vec3 n = normalize((mdv*vec4(gfFacetNormal,0.)).xyz);&#xa;&#x9;vec3 l = vec3(0.,0.,1.);&#xa;&#x9;vec3 v = vec3(0.,0.,-1.);&#xa;&#x9;&#xa;&#x9;vec3 c = max(dot(n,l),0.)*vec3(0.8,0.7,0.9)+pow(max(dot(v,reflect(n,l)),0.),30.)*vec3(0.1,0.6,0.6);&#xa;&#x9;float d = min(min(gfTriDistance.x,gfTriDistance.y),gfTriDistance.z);&#xa;&#xa;&#x9;tesselate = vec4(c*amplify(d,40.,-0.5),1);&#xa;}&#xa;"/>
+  <string name="genericTessCHead" val="#version 410&#xa;&#xa;layout(vertices = 3) out;&#xa;uniform float tessLevel;&#xa;uniform float tessAlpha;&#xa;uniform mat4 model;&#xa;uniform mat4 view;&#xa;uniform mat4 proj;&#xa;uniform float zmin;&#xa;uniform float zmax;&#xa;"/>
+  <string name="genericTessCBody" val="// kindly provided by Jonathan Dupuy&#xa;// based on http://onrendering.blogspot.fr/2011/12/tessellation-on-gpu-curved-pn-triangles.html&#xa;&#xa;// PN patch data&#xa;struct PnPatch&#xa;{&#xa; float b210;&#xa; float b120;&#xa; float b021;&#xa; float b012;&#xa; float b102;&#xa; float b201;&#xa; float b111;&#xa; float n110;&#xa; float n011;&#xa; float n101;&#xa;};&#xa; &#xa;layout(vertices=3) out;&#xa; &#xa;layout(location = 0) in vec3 vtNormal[];&#xa;layout(location = 1) in vec2 vtTexcoord[];&#xa; &#xa;layout(location = 0) out vec3 ttNormal[3];&#xa;layout(location = 3) out vec2 ttTexcoord[3];&#xa;layout(location = 6) out PnPatch ttPnPatch[3];&#xa; &#xa;float wij(int i, int j)&#xa;{&#xa; return dot(gl_in[j].gl_Position.xyz - gl_in[i].gl_Position.xyz, vtNormal[i]);&#xa;}&#xa; &#xa;float vij(int i, int j)&#xa;{&#xa; vec3 Pj_minus_Pi = gl_in[j].gl_Position.xyz - gl_in[i].gl_Position.xyz;&#xa; vec3 Ni_plus_Nj  = vtNormal[i]+vtNormal[j];&#xa; return 2.0*dot(Pj_minus_Pi, Ni_plus_Nj)/dot(Pj_minus_Pi, Pj_minus_Pi);&#xa;}&#xa; &#xa;void main()&#xa;{&#xa; // get data&#xa; gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa; ttNormal[gl_InvocationID]            = vtNormal[gl_InvocationID];&#xa; ttTexcoord[gl_InvocationID]          = vtTexcoord[gl_InvocationID];&#xa; &#xa; // set base&#xa; float P0 = gl_in[0].gl_Position[gl_InvocationID];&#xa; float P1 = gl_in[1].gl_Position[gl_InvocationID];&#xa; float P2 = gl_in[2].gl_Position[gl_InvocationID];&#xa; float N0 = vtNormal[0][gl_InvocationID];&#xa; float N1 = vtNormal[1][gl_InvocationID];&#xa; float N2 = vtNormal[2][gl_InvocationID];&#xa; &#xa; // compute control points&#xa; ttPnPatch[gl_InvocationID].b210 = (2.0*P0 + P1 - wij(0,1)*N0)/3.0;&#xa; ttPnPatch[gl_InvocationID].b120 = (2.0*P1 + P0 - wij(1,0)*N1)/3.0;&#xa; ttPnPatch[gl_InvocationID].b021 = (2.0*P1 + P2 - wij(1,2)*N1)/3.0;&#xa; ttPnPatch[gl_InvocationID].b012 = (2.0*P2 + P1 - wij(2,1)*N2)/3.0;&#xa; ttPnPatch[gl_InvocationID].b102 = (2.0*P2 + P0 - wij(2,0)*N2)/3.0;&#xa; ttPnPatch[gl_InvocationID].b201 = (2.0*P0 + P2 - wij(0,2)*N0)/3.0;&#xa; float E = ( ttPnPatch[gl_InvocationID].b210&#xa;           + ttPnPatch[gl_InvocationID].b120&#xa;           + ttPnPatch[gl_InvocationID].b021&#xa;           + ttPnPatch[gl_InvocationID].b012&#xa;           + ttPnPatch[gl_InvocationID].b102&#xa;           + ttPnPatch[gl_InvocationID].b201 ) / 6.0;&#xa; float V = (P0 + P1 + P2)/3.0;&#xa; ttPnPatch[gl_InvocationID].b111 = E + (E - V)*0.5;&#xa; ttPnPatch[gl_InvocationID].n110 = N0+N1-vij(0,1)*(P1-P0);&#xa; ttPnPatch[gl_InvocationID].n011 = N1+N2-vij(1,2)*(P2-P1);&#xa; ttPnPatch[gl_InvocationID].n101 = N2+N0-vij(2,0)*(P0-P2);&#xa; &#xa; // set tess levels&#xa; gl_TessLevelOuter[gl_InvocationID] = tessLevel;&#xa; gl_TessLevelInner[0] = tessLevel;&#xa;}&#xa;"/>
+  <string name="genericTessEHead" val="#version 410&#xa;&#xa;uniform float tessLevel;&#xa;uniform float tessAlpha;&#xa;uniform mat4 model;&#xa;uniform mat4 view;&#xa;uniform mat4 proj;&#xa;uniform float zmin;&#xa;uniform float zmax;&#xa;"/>
+  <string name="genericTessEBody" val="// kindly provided by Jonathan Dupuy&#xa;// based on http://onrendering.blogspot.fr/2011/12/tessellation-on-gpu-curved-pn-triangles.html&#xa;&#xa;// PN patch data&#xa;struct PnPatch&#xa;{&#xa; float b210;&#xa; float b120;&#xa; float b021;&#xa; float b012;&#xa; float b102;&#xa; float b201;&#xa; float b111;&#xa; float n110;&#xa; float n011;&#xa; float n101;&#xa;};&#xa; &#xa;layout(triangles, equal_spacing, ccw) in;&#xa;//layout(triangles, fractional_odd_spacing, ccw) in;&#xa;&#xa;layout(location = 0) in vec3 ttNormal[];&#xa;layout(location = 3) in vec2 ttTexcoord[];&#xa;layout(location = 6) in PnPatch ttPnPatch[];&#xa; &#xa;layout(location = 0) out vec3 tgNormal;&#xa;layout(location = 3) out vec2 tgTexcoord;&#xa;layout(location = 6) out vec3 tgPosition;&#xa;&#xa;#define b300    gl_in[0].gl_Position.xyz&#xa;#define b030    gl_in[1].gl_Position.xyz&#xa;#define b003    gl_in[2].gl_Position.xyz&#xa;#define n200    ttNormal[0]&#xa;#define n020    ttNormal[1]&#xa;#define n002    ttNormal[2]&#xa;#define uvw     gl_TessCoord&#xa; &#xa;void main()&#xa;{&#xa;mat4 mdv    = view*model;&#xa;mat4 mvp    = proj*mdv;&#xa;&#xa; vec3 uvwSquared = uvw*uvw;&#xa; vec3 uvwCubed   = uvwSquared*uvw;&#xa; &#xa; // extract control points&#xa; vec3 b210 = vec3(ttPnPatch[0].b210, ttPnPatch[1].b210, ttPnPatch[2].b210);&#xa; vec3 b120 = vec3(ttPnPatch[0].b120, ttPnPatch[1].b120, ttPnPatch[2].b120);&#xa; vec3 b021 = vec3(ttPnPatch[0].b021, ttPnPatch[1].b021, ttPnPatch[2].b021);&#xa; vec3 b012 = vec3(ttPnPatch[0].b012, ttPnPatch[1].b012, ttPnPatch[2].b012);&#xa; vec3 b102 = vec3(ttPnPatch[0].b102, ttPnPatch[1].b102, ttPnPatch[2].b102);&#xa; vec3 b201 = vec3(ttPnPatch[0].b201, ttPnPatch[1].b201, ttPnPatch[2].b201);&#xa; vec3 b111 = vec3(ttPnPatch[0].b111, ttPnPatch[1].b111, ttPnPatch[2].b111);&#xa; &#xa; // extract control normals&#xa; vec3 n110 = normalize(vec3(ttPnPatch[0].n110,ttPnPatch[1].n110,ttPnPatch[2].n110));&#xa; vec3 n011 = normalize(vec3(ttPnPatch[0].n011,ttPnPatch[1].n011,ttPnPatch[2].n011));&#xa; vec3 n101 = normalize(vec3(ttPnPatch[0].n101,ttPnPatch[1].n101,ttPnPatch[2].n101));&#xa; &#xa; // compute texcoords&#xa; tgTexcoord  = gl_TessCoord[2]*ttTexcoord[0]&#xa;            + gl_TessCoord[0]*ttTexcoord[1]&#xa;            + gl_TessCoord[1]*ttTexcoord[2];&#xa; &#xa; // normal&#xa; vec3 barNormal = gl_TessCoord[2]*ttNormal[0] + gl_TessCoord[0]*ttNormal[1] + gl_TessCoord[1]*ttNormal[2];&#xa; vec3 pnNormal  = n200*uvwSquared[2]&#xa;                + n020*uvwSquared[0]&#xa;                + n002*uvwSquared[1]&#xa;                + n110*uvw[2]*uvw[0]&#xa;                + n011*uvw[0]*uvw[1]&#xa;                + n101*uvw[2]*uvw[1];&#xa; tgNormal = tessAlpha*pnNormal + (1.0-tessAlpha)*barNormal;&#xa; tgNormal = (mdv*vec4(tgNormal,0)).xyz;&#xa; // compute interpolated pos&#xa; vec3 barPos = gl_TessCoord[2]*b300&#xa;             + gl_TessCoord[0]*b030&#xa;             + gl_TessCoord[1]*b003;&#xa; &#xa; // save some computations&#xa; uvwSquared *= 3.0;&#xa; &#xa; // compute PN position&#xa; vec3 pnPos  = b300*uvwCubed[2]&#xa;             + b030*uvwCubed[0]&#xa;             + b003*uvwCubed[1]&#xa;             + b210*uvwSquared[2]*uvw[0]&#xa;             + b120*uvwSquared[0]*uvw[2]&#xa;             + b201*uvwSquared[2]*uvw[1]&#xa;             + b021*uvwSquared[0]*uvw[1]&#xa;             + b102*uvwSquared[1]*uvw[2]&#xa;             + b012*uvwSquared[1]*uvw[0]&#xa;             + b111*6.0*uvw[0]*uvw[1]*uvw[2];&#xa; &#xa; // final position and normal&#xa; vec3 finalPos = (1.0-tessAlpha)*barPos + tessAlpha*pnPos;&#xa;&#xa; tgPosition  = finalPos;&#xa; gl_Position   = mvp*vec4(finalPos,1.0);&#xa;}"/>
+  <string name="genericGeomHead" val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform float tessLevel;&#xa;uniform float tessAlpha;&#xa;uniform mat4 model;&#xa;uniform mat4 view;&#xa;uniform mat4 proj;&#xa;uniform float zmin;&#xa;uniform float zmax;&#xa;"/>
+  <string name="genericGeomBody" val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;layout(location = 0) in vec3 tgNormal[3];&#xa;layout(location = 3) in vec2 tgTexcoord[3];&#xa;layout(location = 6) in vec3 tgPosition[3];&#xa;&#xa;layout(location = 0) out vec3 gfNormal;&#xa;layout(location = 1) out vec2 gfTexcoord;&#xa;layout(location = 2) out vec3 gfFacetNormal;&#xa;layout(location = 3) out vec3 gfTriDistance;&#xa;&#xa;void main() {&#xa;&#x9;vec3 colors[3] = vec3[](vec3(1.,0.,0.),vec3(0.,1.,0.),vec3(0.,0.,1.));&#xa;&#x9;vec3 D1 = tgPosition[0]-tgPosition[1];&#xa;&#x9;vec3 D2 = tgPosition[0]-tgPosition[2];&#xa;&#x9;vec3 N = normalize(cross(D1,D2));&#xa;&#xa;&#x9;for(int i=0;i&lt;3;++i) { &#xa;&#x9;&#x9;gfNormal = tgNormal[i];&#xa;&#x9;&#x9;gfTexcoord = tgTexcoord[i];&#xa;&#x9;&#x9;gfFacetNormal = N;&#xa;&#x9;&#x9;gfTriDistance = colors[i];&#xa;&#x9;&#x9;gl_Position = gl_in[i].gl_Position;&#xa;&#x9;&#x9;EmitVertex();&#xa;&#x9;}&#xa;&#xa;&#x9;EndPrimitive();&#xa;}&#xa;"/>
+  <vector2f name="genericTSize">
+   <float name="0" val="0"/>
+   <float name="1" val="0"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float name="0" val="512"/>
+   <float name="1" val="512"/>
+  </vector2f>
+  <bool name="genericNeedMouse" val="0"/>
+  <bool name="genericNeedKeyboard" val="0"/>
+  <uint name="genericNbWidgets" val="2"/>
+  <int name="genericWidgetType-0" val="0"/>
+  <int name="genericWidgetView-0" val="1"/>
+  <string name="genericWidgetName-0" val="tessLevel"/>
+  <bool name="genericWidgetKeyframed-0" val="1"/>
+  <int name="genericWidgetType-1" val="0"/>
+  <int name="genericWidgetView-1" val="1"/>
+  <string name="genericWidgetName-1" val="tessAlpha"/>
+  <bool name="genericWidgetKeyframed-1" val="1"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint name="nbChildren" val="3"/>
+  <IOData name="childWidget-0">
+   <bool name="trackballCameraKeyframed" val="1"/>
+   <IOData name="trackballCameraAttribCurveQ">
+    <quaternionf name="currentVal">
+     <float name="0" val="1"/>
+     <float name="1" val="0"/>
+     <float name="2" val="0"/>
+     <float name="3" val="0"/>
+    </quaternionf>
+    <uint name="nbCurves" val="4"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="1"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-1">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="0"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-2">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="0"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-3">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="0"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <IOData name="trackballCameraAttribCurveS">
+    <vector3f name="currentVal">
+     <float name="0" val="0"/>
+     <float name="1" val="0"/>
+     <float name="2" val="3"/>
+    </vector3f>
+    <uint name="nbCurves" val="3"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="0"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-1">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="0"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-2">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="2.55528"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <int name="projection" val="0"/>
+   <int name="rotation" val="0"/>
+   <uint name="nbChildren" val="0"/>
+  </IOData>
+  <IOData name="childWidget-1">
+   <bool name="floatAttribKeyframed" val="1"/>
+   <float name="floatAttribMinVal" val="1"/>
+   <float name="floatAttribMaxVal" val="50"/>
+   <IOData name="floatAttribCurve">
+    <float name="currentVal" val="5"/>
+    <uint name="nbCurves" val="1"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="5"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <uint name="nbChildren" val="0"/>
+  </IOData>
+  <IOData name="childWidget-2">
+   <bool name="floatAttribKeyframed" val="1"/>
+   <float name="floatAttribMinVal" val="0"/>
+   <float name="floatAttribMaxVal" val="10"/>
+   <IOData name="floatAttribCurve">
+    <float name="currentVal" val="1"/>
+    <uint name="nbCurves" val="1"/>
+    <IOData name="curve-0">
+     <int name="interpType" val="0"/>
+     <int name="leftType" val="0"/>
+     <int name="rightType" val="0"/>
+     <IOData name="interpolator">
+      <uint name="nbPoints" val="1"/>
+      <uint name="nbTangents" val="0"/>
+      <vector2f name="controlPoint-0">
+       <float name="0" val="0"/>
+       <float name="1" val="1"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <uint name="nbChildren" val="0"/>
+  </IOData>
+ </IOData>
+ <vector2f name="nodeOutputPos-0-0">
+  <float name="0" val="56.32"/>
+  <float name="1" val="28.16"/>
+ </vector2f>
+</Gratin>

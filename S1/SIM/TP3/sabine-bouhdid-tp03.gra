@@ -1,0 +1,148 @@
+<Gratin type="pipeline">
+ <int name="majorVersion" val="0"/>
+ <int name="minorVersion" val="3"/>
+ <IOData name="mainWindow">
+  <IOData name="graphWidget">
+   <IOData name="graph">
+    <uint name="nbNodes" val="1"/>
+    <string name="nodeStringId-0" val="imgGenericId"/>
+    <uint name="nodeVersion-0" val="1"/>
+    <string name="nodeName-0" val="init"/>
+    <string name="nodePath-0" val="Generic/"/>
+    <string name="nodeDesc-0" val="Generic node for image processing"/>
+    <string name="nodeHelp-0" val="This node was designed to create custom shaders&#xa;The settings widget allows to modify input, output parameters&#xa;as well as the output image sizes.&#xa;&#xa;WARNING1: you will be able to modify the number of inputs/outputs&#xa;only if the node is entirely disconnected.&#xa;WARNING2: input/output names will not be modified if a custom node is created&#xa;from this node because these names should be edited directly in the setting widget&#xa;WARNING3: modifying the settings of a node will remove all previously&#xa;defined keyframes&#xa;&#xa;* Special data allows to modify the output image (using a multiple of&#xa;the input size, plus an offset vector&#xa;Check use mouse/keyboard if you want to interact with the mouse&#xa;&#xa;* Input data allows to add/remove/displace input data (only if disconnected)&#xa;&#xa;* Output data allows to add/remove/displace output data (only if disconnected)&#xa;&#xa;* Param data allows to add/remove parameters that will automatically be &#xa;included in your shader.&#xa;For each of them you may choose a proper name, type, and min/max/default values.&#xa;Check keyframes if you want your parameter to be accessible&#xa; through the animation widget&#xa;&#xa;In the node interface itself:&#xa;Source tab contains the head and body of your GLSL source (only the body is editable)&#xa;Params tab contains the defined widgets according to your setting choices&#xa;Log tab contains compilation errors&#xa;&#xa;Once your settings and source completed, click on apply to see the result&#xa;"/>
+    <uint name="nodeId-0" val="0"/>
+    <uint name="nodeGraphId-0" val="0"/>
+    <vector2f name="nodePos-0">
+     <float name="0" val="2337.76"/>
+     <float name="1" val="-3380.7"/>
+    </vector2f>
+    <int name="nodeInputNameSize-0" val="0"/>
+    <int name="nodeOutputNameSize-0" val="1"/>
+    <string name="nodeOutputName-0-0" val="outBuffer0"/>
+    <bool name="nodeHasWidget-0" val="1"/>
+    <IOData name="node-0">
+     <string name="genericGlslVersion" val="420"/>
+     <string name="genericNodeName" val="init"/>
+     <bool name="genericUseVertex" val="0"/>
+     <bool name="genericUseTesselation" val="0"/>
+     <bool name="genericUseGeometry" val="0"/>
+     <bool name="genericUseFragment" val="1"/>
+     <int name="genericOutFilter" val="9729"/>
+     <int name="genericOutWrap" val="33071"/>
+     <bool name="genericUseDepthTest" val="0"/>
+     <bool name="genericUseBlending" val="0"/>
+     <uint name="genericDepthFunc" val="513"/>
+     <uint name="genericBlendSrc" val="1"/>
+     <uint name="genericBlendDst" val="0"/>
+     <vector4f name="genericBackground">
+      <float name="0" val="0"/>
+      <float name="1" val="0"/>
+      <float name="2" val="0"/>
+      <float name="3" val="0"/>
+     </vector4f>
+     <string name="genericVertHead" val="#version 420&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform vec2 mouse;&#xa;"/>
+     <string name="genericVertBody" val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;"/>
+     <string name="genericFragHead" val="#version 420&#xa;&#xa;layout(location = 0) out vec4 outBuffer0;&#xa;uniform vec2 mouse;&#xa;"/>
+     <string name="genericFragBody" val="in vec2 texcoord;&#xa;in vec4 gl_FragCoord;&#xa;#define NUM_PLANS 1&#xa;#define NUM_SPHERES 2&#xa;#define NUM_COULEURS 7&#xa;#define NB_ITER_MAX 100&#xa;precision highp float;&#xa;&#xa;//Camera&#xa;//defini par une position et 3 vecteurs (up,view,right)&#xa;struct Camera{&#xa;&#x9;vec3 e;//position de la camera&#xa;&#x9;vec3 u; // right&#xa;&#x9;vec3 v; // vecteur up&#xa;&#x9;vec3 w; //vecteur view direction vers la scene&#xa;};&#xa;&#xa;//Plan&#xa;struct Plane{&#xa;&#x9;vec3 n;//normal&#xa;&#x9;float d;//offset&#xa;};&#xa;&#xa;//Plan implicite&#xa;float sdPlane( vec3 p, vec4 n )&#xa;{&#xa;  // n must be normalized&#xa;  return dot(p,n.xyz) +n.w;&#xa;}&#xa;&#xa;&#xa;//Rayon&#xa;struct Ray{&#xa;&#x9;vec3 ro; //origin&#xa;&#x9;vec3 rd; //direction&#xa;};&#xa;&#xa;//Sphere&#xa;struct Sphere{&#xa;&#x9;vec3 o; //origin&#xa;     float r;//rayon&#xa;};&#xa;&#xa;float sdSphere( vec3 p, vec3 o, float s )&#xa;{&#xa;&#x9;//return length(p)-s;&#xa;&#x9;float po = distance(p,o);&#xa;&#x9;return length(o - p) - s;&#xa;&#xa;}&#xa;&#xa;struct Paquet{&#xa;&#x9;vec3 n; // normale&#xa;&#x9;vec3 prof; // profondeur&#xa;&#x9;float dist;  //distance a la lumiere&#xa;&#x9;int coul; // indice de la couleur&#xa;&#x9;vec3 p; // position de l'objet&#xa;};&#xa;&#xa;//attributs&#xa;Camera cam;&#xa;Plane murs[ NUM_PLANS ];&#xa;Sphere balles[NUM_SPHERES];&#xa;vec4 couleurs[NUM_COULEURS];&#xa;vec3 lumiere;&#xa;&#xa;&#xa;//initialisation de la caméra&#xa;void initCam(){&#xa;&#xa;&#x9;//souris normalisée&#xa;&#x9;vec2 m = mouse/512.0;&#xa;&#xa;&#x9;//position de la caméra&#xa;&#x9;//cam.e = vec3(1,1,1);&#xa;&#xa;&#x9;//position de la caméra contrôlée par la souris&#xa;&#x9;cam.e = vec3(m.x,m.y,4);&#xa;&#xa;&#x9;//direction vue (là où on regarde) , ici on regarde selon l'axe z&#xa;&#x9;cam.w = vec3(0,0,-1);&#xa;&#xa;&#x9;//direction up &#xa;&#x9;cam.v = vec3(0,1,0);&#xa;&#xa;&#x9;//on recalcule pour que tout soit orthogonal&#xa;&#x9;cam.u= cross(cam.w,cam.v);&#xa;&#x9;cam.v = cross(cam.u,cam.w);&#xa;}&#xa;&#xa;void initLight(){&#xa;&#x9;//lumiere = vec3(0,0.5,0);&#xa;&#x9;lumiere = vec3(1,1,0.5);&#xa;//&#x9;lumiere = normalize(vec3(10,1,0));&#xa;&#xa;}&#xa;&#xa;//initialisation des plans, ici 5 &quot;murs&quot;&#xa;void initPlans(){&#xa;&#x9;//Salle : Fond de la salle, Mur gauche , Sol de la salle, Mur droit, Plafond &#xa;&#x9;//murs = Plane[]( Plane(vec3(0,0,1),-0.5) , Plane(vec3(1,0,0),2) , Plane(vec3(0,1,0),-0.5) , Plane(vec3(-1,0,0),0.5) , Plane(vec3(0,1,0),0.5) );&#xa;&#x9;//plan bas &#xa;&#x9;murs = Plane[](Plane(normalize(vec3(0,1,0)),0.5) );&#xa;&#xa;&#x9;//3 plans principaux Oxy , Oyz et Ozx &#xa;&#x9;//murs = Plane[](Plane(normalize(vec3(0,0,1)),0), Plane(normalize(vec3(1,0,0)),0), Plane(normalize(vec3(0,1,0)),0) ); &#xa;&#xa;}&#xa;&#xa;//initialisation des spheres&#xa;void initSpheres(){&#xa;&#x9;//On place la sphère&#xa;&#x9;balles = Sphere[](Sphere(vec3(0,0,0),0.4),Sphere(vec3(1.3,-0.3,1),0.3) ) ;//vec3(0,2,0)&#xa;}&#xa;&#xa;void initCouleur(){&#xa;&#x9;// COULEURS DIFFERENTES&#xa;&#x9;//[BLEU ; MAGENTA ; ROUGE ; JAUNE ; VERT ;CYAN]&#xa;&#x9;couleurs = vec4[](vec4(0,0,1,1), vec4(1,0,1,1), vec4(1,0,0,1), vec4(1,1,0,1), vec4(0,1,0,1),vec4(0,1,1,1),vec4(0,0,0,1));&#xa;}&#xa;&#xa;&#xa;//Shading simple&#xa;//Prend un paquet en entrée : un paquet est une structure composée d'un vec3 n qui est une norme&#xa;//d'un float dist qui est la distance entre le point et la lumiere&#xa;//d'un entier coul qui est l'indice de la couleur à afficher&#xa;//cette fonction est appelée dans la fonction RayMarching&#xa;//vec4 directIllumination(Paquet p){&#xa;&#xa;&#x9;//On prend la position du pixel entre [-1 ; 1]&#xa;&#x9;//vec2 pos =( gl_FragCoord.xy - (512.0/2) ) / (512.0/2) ;&#xa;&#xa;  //  &#x9;return dot(p.n,lumiere)*p.dist*vec4(couleurs[p.coul].xyz,1);&#xa;//}&#xa;&#xa;&#xa;&#xa;&#xa;Paquet rayMarching(){&#xa;//On prend la position du pixel entre [-1 ; 1]&#xa;&#x9;vec2 pos =( gl_FragCoord.xy - (512.0/2) ) / (512.0/2) ;&#xa;&#x9;&#xa;&#x9;//On affiche la source de lumiere&#xa;&#x9;//generer un rayon avec la camera&#xa;&#x9;float D  = 1.0/(tan(3.14/4.0)); //radian&#xa;&#x9;Ray ray = Ray( cam.e , normalize(vec3(pos.x*cam.u+pos.y*cam.v+D*cam.w)) ) ;&#xa;&#x9;Plane plan ;&#xa;&#x9;Sphere ball ;&#xa;&#x9;vec3 p;&#xa;&#xa;&#x9;float t =0;&#xa;&#xa;&#x9;vec4 n;&#xa;&#xa;&#x9;float pas =0.1;&#xa;&#xa;&#x9;float dist[ NUM_PLANS+NUM_SPHERES ];&#xa;&#xa;&#x9;for( int i=0;i&lt;NB_ITER_MAX;i++){&#xa;&#xa;&#x9;&#x9;p = ray.ro + ray.rd*t;&#x9;&#x9;&#xa;&#xa;&#xa;&#x9;&#x9;for(int j=0;j&lt;NUM_PLANS+NUM_SPHERES;j++){&#xa;&#x9;&#x9;&#x9;if(j &lt; NUM_PLANS){&#xa;&#x9;&#x9;&#x9;&#x9;n = vec4(murs[j].n,murs[j].d);&#xa;&#x9;&#x9;&#x9;&#x9;dist[j] = sdPlane(p,n);&#xa;&#x9;&#x9;&#x9;&#x9;if(dist[j] &lt;=0){&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;return Paquet(n.xyz,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;distance(p.xyz,lumiere),j,p);&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;}else{&#xa;&#x9;&#x9;&#x9;&#x9;dist[j] = sdSphere(p,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;if(dist[j] &lt;=0){&#xa;&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//Calcul des normales&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//calculs des points avant et  apres selon x, y et z pour calculer le gradient -> normale&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 pprecx =  vec3(p.x-pas,p.y,p.z);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 pprecy =  vec3(p.x,p.y-pas,p.z);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 pprecz =  vec3(p.x,p.y,p.z-pas);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 psuivx =  vec3(p.x+pas,p.y,p.z);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 psuivy =  vec3(p.x,p.y+pas,p.z);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 psuivz =  vec3(p.x,p.y,p.z+pas);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distprecx =  sdSphere(pprecx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distprecy =  sdSphere(pprecy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distprecz =  sdSphere(pprecz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distsuivx = sdSphere(psuivx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distsuivy = sdSphere(psuivy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;float distsuivz = sdSphere(psuivz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;//On normalise les coordonnees de la normale&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;vec3 norm =  normalize(vec3(distsuivx-distprecx,distsuivy-distprecy,distsuivz-distprecz));&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;return Paquet(norm,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;distance(p.xyz,lumiere),j,p);&#xa;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;}&#xa;&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;t += pas;&#xa;&#x9;}&#xa;return Paquet(vec3(0,0,0),vec3(0,0,0),0.0,6,p);&#xa;&#xa;}&#xa;&#xa;&#xa;vec4 rayMarching2(Ray ray, Paquet paq){&#xa;&#x9;&#xa;&#x9;vec3 p;&#xa;&#x9;float t =0;&#xa;&#x9;vec4 n;&#xa;&#x9;float pas =0.1;&#xa;&#x9;Paquet init = paq;&#xa;&#x9;float dist_Lum = 1;&#xa;&#x9;float dist_Obj_Obj ;&#xa;&#x9;float dist_Lum_Obj ;&#xa;&#xa;&#x9;float rayon = 0.3;&#xa;&#xa;&#x9;float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;&#xa;&#x9;//si lumiere&#xa;&#x9;if( dist  &lt;= pow(rayon,2) ){&#xa;&#x9;&#x9;paq.coul = 3;&#xa;&#x9;&#x9;return couleurs[paq.coul];&#xa;&#x9;}&#xa;&#xa;&#x9;for( int i=0;i&lt;NB_ITER_MAX;i++){&#xa;&#x9;&#x9;p = ray.ro + ray.rd*t;&#x9;&#xa;&#xa;&#x9;&#x9;//On regarde la distance à la lumiere&#xa;&#x9;&#x9;if(init.coul &lt; NUM_PLANS){//si l'objet regardé est un plan&#xa;&#x9;&#x9;&#x9;n = vec4(murs[init.coul].n,murs[init.coul].d);&#xa;&#x9;&#x9;&#x9;dist_Lum = sdPlane(lumiere,n);&#xa;&#xa;&#x9;&#x9;}else{//si c'est une sphere&#xa;&#x9;&#x9;&#x9;dist_Lum = sdSphere(lumiere, balles[init.coul-NUM_PLANS].o,balles[init.coul-NUM_PLANS].r);&#xa;&#x9;&#x9;}&#xa;&#x9;&#x9;&#xa;&#xa;&#x9;&#x9;//Pour chaque objet, on regarde si on intersecte la lumiere&#xa;&#x9;&#x9;//c'est à dire si dist_Lum > dist_Lum_Obj&#x9;&#xa;&#xa;&#x9;&#x9;for(int j=0;j&lt;NUM_PLANS+NUM_SPHERES;j++){&#xa;&#x9;&#x9;&#x9;if(j &lt; NUM_PLANS){&#xa;&#x9;&#x9;&#x9;&#x9;n = vec4(murs[j].n,murs[j].d);&#xa;&#x9;&#x9;&#x9;&#x9;dist_Obj_Obj = sdPlane(p,n);&#xa;&#x9;&#x9;&#x9;&#x9;dist_Lum_Obj = sdPlane(lumiere,n);&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;if( dist_Obj_Obj &lt;= 0 &amp;&amp;  dist_Lum_Obj &lt;dist_Lum){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;return couleurs[paq.coul]*0.5;&#xa;&#xa;&#x9;&#x9;&#x9;&#x9;}&#xa;&#xa;&#x9;&#x9;&#x9;}else{&#xa;&#x9;&#x9;&#x9;&#x9;dist_Obj_Obj = sdSphere(p,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;dist_Lum_Obj = sdSphere(lumiere,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);&#xa;&#x9;&#x9;&#x9;&#x9;if(dist_Obj_Obj &lt;= 0 &amp;&amp;  dist_Lum_Obj &lt; dist_Lum){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;return couleurs[paq.coul]*0.5;&#xa;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;}&#xa;&#xa;&#x9;&#x9;}&#xa;&#xa;&#x9;&#x9;t+=pas;&#xa;&#x9;}&#xa;&#x9;&#xa;&#x9;&#x9;return couleurs[init.coul];&#xa;&#x9;&#xa;}&#xa;&#xa;&#xa;//Affichage de la scene avec couleurs&#xa;vec4 affichageSimple(){&#xa;&#x9;Paquet paq = rayMarching();&#xa;&#x9;return couleurs[paq.coul];&#xa;}&#xa;&#xa;&#xa;//affichage normales&#xa;vec4 affichageNormales(){&#xa;&#x9;Paquet paq = rayMarching();&#xa;&#x9;return vec4(paq.n.xyz,1);&#xa;}&#xa;&#xa;&#xa;//affichage Profondeur&#xa;vec4 affichageProfondeur(){&#xa;&#x9;Paquet paq = rayMarching();&#xa;&#x9;return vec4(paq.prof,1);&#xa;}&#xa;&#xa;&#xa;&#xa;//affichage Shading&#xa;vec4 directIllumination(){&#xa;&#xa;&#x9;float rayon = 0.3;&#xa;&#x9;Paquet paq = rayMarching();&#xa;&#x9;float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;&#xa;&#x9;//si lumiere&#xa;&#x9;if( dist  &lt;= pow(rayon,2) ){&#xa;&#x9;&#x9;return (sqrt(dist)/rayon)*couleurs[3];&#xa;&#x9;}&#xa;&#x9;// dot(normale, lumiere) * couleur&#xa;&#x9;return vec4( ( dot(paq.n.xyz,normalize(lumiere-paq.p))*vec4(couleurs[paq.coul].xyz,1) ).xyz, 1);&#xa;&#x9;&#xa;}&#xa;&#xa;&#xa;//affichage Ombre&#xa;vec4 affichageOmbres(){&#xa;&#xa;&#x9;float rayon = 0.3;&#xa;&#x9;Paquet paq = rayMarching();&#xa;&#x9;float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;&#xa;&#x9;//si lumiere&#xa;&#x9;if( dist  &lt;= pow(rayon,2) ){&#xa;&#x9;&#x9;return couleurs[3];&#xa;&#x9;}else{&#xa;&#x9;// dot(normale, lumiere) * couleur&#xa;&#x9;&#x9;Ray ray = Ray(paq.p,normalize(lumiere-paq.p));&#xa;&#x9;&#x9;vec4 n_coul = rayMarching2(ray,paq);&#xa;    &#x9;&#x9;//return n_coul;&#xa;&#x9;&#x9;return vec4( ( dot(paq.n.xyz,normalize(lumiere-paq.p))*vec4(n_coul.xyz,1) ).xyz, 1);&#xa;&#x9;}&#xa;&#x9;&#xa;}&#xa;&#xa;&#xa;&#xa;&#xa;&#xa;//Main&#xa;void main() {&#xa;&#x9;outBuffer0 = vec4(1,1,1,1);&#xa;&#x9;initCouleur();&#xa;&#x9;initCam();&#xa;&#x9;initLight();&#xa;&#x9;initPlans();&#xa;&#x9;initSpheres();&#xa;&#x9;//outBuffer0 = affichageSimple();&#xa;&#x9;//outBuffer0 = affichageNormales();&#xa;&#x9;//outBuffer0 = affichageProfondeur();&#xa;&#x9;//outBuffer0 =  directIllumination();&#xa;&#x9;outBuffer0 =  affichageOmbres();&#xa;}&#xa;&#xa;"/>
+     <string name="genericTessCHead" val="#version 420&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform vec2 mouse;&#xa;"/>
+     <string name="genericTessCBody" val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;"/>
+     <string name="genericTessEHead" val="#version 420&#xa;&#xa;uniform vec2 mouse;&#xa;"/>
+     <string name="genericTessEBody" val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;"/>
+     <string name="genericGeomHead" val="#version 420&#xa;&#xa;layout(triangles) in;&#xa;uniform vec2 mouse;&#xa;"/>
+     <string name="genericGeomBody" val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}"/>
+     <vector2f name="genericTSize">
+      <float name="0" val="0"/>
+      <float name="1" val="0"/>
+     </vector2f>
+     <vector2f name="genericTOffset">
+      <float name="0" val="512"/>
+      <float name="1" val="512"/>
+     </vector2f>
+     <bool name="genericNeedMouse" val="1"/>
+     <bool name="genericNeedKeyboard" val="0"/>
+     <uint name="genericNbWidgets" val="0"/>
+    </IOData>
+    <IOData name="nodeWidget-0">
+     <uint name="nbChildren" val="1"/>
+     <IOData name="childWidget-0">
+      <bool name="vector2iAttribKeyframed" val="1"/>
+      <vector2i name="vector2iAttribMinVal">
+       <int name="0" val="-10000"/>
+       <int name="1" val="-10000"/>
+      </vector2i>
+      <vector2i name="vector2iAttribMaxVal">
+       <int name="0" val="10000"/>
+       <int name="1" val="10000"/>
+      </vector2i>
+      <IOData name="vector2iAttribCurve">
+       <vector2i name="currentVal">
+        <int name="0" val="527"/>
+        <int name="1" val="96"/>
+       </vector2i>
+       <uint name="nbCurves" val="2"/>
+       <IOData name="curve-0">
+        <int name="interpType" val="0"/>
+        <int name="leftType" val="0"/>
+        <int name="rightType" val="0"/>
+        <IOData name="interpolator">
+         <uint name="nbPoints" val="1"/>
+         <uint name="nbTangents" val="0"/>
+         <vector2f name="controlPoint-0">
+          <float name="0" val="0"/>
+          <float name="1" val="527"/>
+         </vector2f>
+        </IOData>
+       </IOData>
+       <IOData name="curve-1">
+        <int name="interpType" val="0"/>
+        <int name="leftType" val="0"/>
+        <int name="rightType" val="0"/>
+        <IOData name="interpolator">
+         <uint name="nbPoints" val="1"/>
+         <uint name="nbTangents" val="0"/>
+         <vector2f name="controlPoint-0">
+          <float name="0" val="0"/>
+          <float name="1" val="96"/>
+         </vector2f>
+        </IOData>
+       </IOData>
+      </IOData>
+      <uint name="nbChildren" val="0"/>
+     </IOData>
+    </IOData>
+    <vector2f name="nodeOutputPos-0-0">
+     <float name="0" val="56.32"/>
+     <float name="1" val="28.16"/>
+    </vector2f>
+   </IOData>
+   <float name="scale" val="1.746"/>
+   <vector2f name="offset">
+    <float name="0" val="2433.89"/>
+    <float name="1" val="-2978.26"/>
+   </vector2f>
+   <IOData name="animation">
+    <uint name="firstFrame" val="0"/>
+    <uint name="lastFrame" val="99"/>
+    <uint name="currentFrame" val="99"/>
+    <uint name="fps" val="24"/>
+   </IOData>
+  </IOData>
+  <IOData name="animationWidget">
+   <vector2i name="animationWidgetSize">
+    <int name="0" val="1766"/>
+    <int name="1" val="351"/>
+   </vector2i>
+   <IOData name="timelineWidget"/>
+  </IOData>
+  <IOData name="nodeListWidget"/>
+  <IOData name="interactionWidget">
+   <float name="scale" val="1.49032"/>
+   <vector2f name="offset">
+    <float name="0" val="245.138"/>
+    <float name="1" val="248.85"/>
+   </vector2f>
+  </IOData>
+  <IOData name="nodeInterfaceWidget"/>
+ </IOData>
+</Gratin>

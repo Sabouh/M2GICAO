@@ -1,0 +1,8 @@
+-I/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/cmake/../src-gratin
+-I/usr/include/eigen3
+-DGRATIN_MAJOR_VERSION=0
+-DGRATIN_MINOR_VERSION=3
+-DGRATIN_PATCH_VERSION=1
+-o
+/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/build-maison/src-nodes/pluginNodes/gaussBlur/moc_gaussBlur.cpp
+/home/bouhdids/Documents/Git/M2GICAO/S1/SIM/gratin-v0.3.1/src-nodes/pluginNodes/gaussBlur/gaussBlur.h

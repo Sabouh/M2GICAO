@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="imgCrop.vert">imgCrop.vert</file>
+      <file alias="imgCrop.frag">imgCrop.frag</file>
+ </qresource>
+ </RCC>

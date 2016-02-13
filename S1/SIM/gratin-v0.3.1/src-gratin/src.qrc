@@ -1,0 +1,34 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+      <file alias="style">../resources/config/gratin.css</file>
+      <file alias="interrogation">../resources/icons/interrogation.svg</file>
+      <file alias="arrow-top-right">../resources/icons/arrow-top-right.svg</file>
+      <file alias="arrow-left">../resources/icons/arrow-left.svg</file>
+      <file alias="arrow-right">../resources/icons/arrow-right.svg</file>
+      <file alias="arrow-up">../resources/icons/arrow-up.svg</file>
+      <file alias="arrow-down">../resources/icons/arrow-down.svg</file>
+      <file alias="horizontal-dashed">../resources/icons/horizontal-dashed.svg</file>
+      <file alias="play">../resources/icons/play.svg</file>
+      <file alias="stop">../resources/icons/stop.svg</file>
+      <file alias="left-left">../resources/icons/left-left.svg</file>
+      <file alias="right-right">../resources/icons/right-right.svg</file>
+      <file alias="set">../resources/icons/set.svg</file>
+      <file alias="edit">../resources/icons/edit.svg</file>
+      <file alias="eye-open">../resources/icons/eye-open.svg</file>
+      <file alias="eye-close">../resources/icons/eye-close.svg</file>
+      <file alias="clean-curve">../resources/icons/clean-curve.svg</file>
+      <file alias="close">../resources/icons/close.svg</file>
+      <file alias="gratin-logo">../resources/icons/gratin-logo.svg</file>
+      <file alias="point.vert">../resources/shaders/point.vert</file>
+      <file alias="point.frag">../resources/shaders/point.frag</file>
+      <file alias="line.vert">../resources/shaders/line.vert</file>
+      <file alias="line.frag">../resources/shaders/line.frag</file>
+      <file alias="node-style.vert">../resources/shaders/node-style.vert</file>
+      <file alias="node-style.frag">../resources/shaders/node-style.frag</file>
+      <file alias="node-tex-content.vert">../resources/shaders/node-tex-content.vert</file>
+      <file alias="node-tex-content.frag">../resources/shaders/node-tex-content.frag</file>
+      <file alias="text.vert">../resources/shaders/text.vert</file>
+      <file alias="text.frag">../resources/shaders/text.frag</file>
+      <file alias="font.png">../resources/imgs/font.png</file>
+ </qresource>
+ </RCC>

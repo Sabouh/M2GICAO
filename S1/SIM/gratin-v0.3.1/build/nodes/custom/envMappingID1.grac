@@ -1,0 +1,81 @@
+<Gratin type="node">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <string val="litsphereShadingID" name="coreHandleStringId"/>
+ <uint val="1" name="coreHandleVersion"/>
+ <string val="envMappingID" name="nodeStringId-0"/>
+ <uint val="1" name="nodeVersion-0"/>
+ <string val="envMapping" name="nodeName-0"/>
+ <string val="Rendering/" name="nodePath-0"/>
+ <string val="Environment mapping " name="nodeDesc-0"/>
+ <string val="Simple environment mapping technique: &#xa;Compute a reflected vector and use it to fetch a latitude-longitude environment.&#xa;&#xa;The node requires a normal map as input and a latitude-longitude environment map. &#xa;&#xa;The view vector is approximated with pixel coords here &#xa;but could be obtained via the genericBuffers node." name="nodeHelp-0"/>
+ <uint val="10" name="nodeId-0"/>
+ <uint val="0" name="nodeGraphId-0"/>
+ <vector2f name="nodePos-0">
+  <float val="686.558" name="0"/>
+  <float val="2787.42" name="1"/>
+ </vector2f>
+ <int val="2" name="nodeInputNameSize-0"/>
+ <int val="1" name="nodeOutputNameSize-0"/>
+ <string val="normalMap" name="nodeInputName-0-0"/>
+ <string val="latLongEnv" name="nodeInputName-0-1"/>
+ <string val="shading" name="nodeOutputName-0-0"/>
+ <bool val="1" name="nodeHasWidget-0"/>
+ <IOData name="node-0">
+  <string val="410" name="genericGlslVersion"/>
+  <string val="envMapping" name="genericNodeName"/>
+  <bool val="0" name="genericUseVertex"/>
+  <bool val="0" name="genericUseTesselation"/>
+  <bool val="0" name="genericUseGeometry"/>
+  <bool val="1" name="genericUseFragment"/>
+  <int val="9729" name="genericOutFilter"/>
+  <int val="33071" name="genericOutWrap"/>
+  <bool val="0" name="genericUseDepthTest"/>
+  <bool val="0" name="genericUseBlending"/>
+  <uint val="513" name="genericDepthFunc"/>
+  <uint val="1" name="genericBlendSrc"/>
+  <uint val="0" name="genericBlendDst"/>
+  <vector4f name="genericBackground">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+   <float val="0" name="2"/>
+   <float val="0" name="3"/>
+  </vector4f>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D normalMap;&#xa;uniform sampler2D latLongEnv;&#xa;" name="genericVertHead"/>
+  <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) out vec4 shading;&#xa;uniform sampler2D normalMap;&#xa;uniform sampler2D latLongEnv;&#xa;" name="genericFragHead"/>
+  <string val="in vec2 texcoord;&#xa;&#xa;#define PI 3.1415926535897&#xa;#define PIO2 1.5707963267948&#xa;#define PIT2 6.2831853071795&#xa;&#xa;float atan2(in float y,in float x) {&#xa;&#x9;if(x>0.0) return atan(y/x);&#xa;&#x9;if(y>=0.0 &amp;&amp; x&lt;0.0) return PI+atan(y/x);&#xa;&#x9;if(y&lt;0.0 &amp;&amp; x&lt;0.0) return -PI+atan(y/x);&#xa;&#x9;if(y>0.0 &amp;&amp; x==0.0) return PIO2;&#xa;&#x9;if(y&lt;0.0 &amp;&amp; x==0.0) return -PIO2;&#xa;&#x9;return 0.0;&#xa;}&#xa;&#xa;vec2 envMapCoord(in vec3 r) {&#xa;&#x9;return vec2((atan2(r.x,r.z)+PI)/PIT2,acos(-r.y)/PI);&#xa;}&#xa;&#xa;void main(void){&#xa;&#x9;// simple approximation of the view vector here&#xa;&#x9;// the ground truth one could be obtained from &#xa;&#x9;// a genericBuffers node&#xa;&#xa;&#x9;vec3 n = texture(normalMap,texcoord).xyz;&#xa;&#x9;vec3 v = normalize(vec3(texcoord*2.-1.,-30.));&#xa;&#x9;vec3 r = reflect(v,n);&#xa;&#xa;&#x9;// get uv coord from a 3D vector&#xa;&#x9;vec2 uv = envMapCoord(r);&#xa;&#x9;&#xa;&#x9;// return the corresponding color&#xa;&#x9;shading.xyz = texture(latLongEnv,uv).xyz;&#xa;&#x9;shading.w = length(n.xyz);&#xa;}" name="genericFragBody"/>
+  <string val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D normalMap;&#xa;uniform sampler2D latLongEnv;&#xa;" name="genericTessCHead"/>
+  <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+  <string val="#version 410&#xa;&#xa;uniform sampler2D normalMap;&#xa;uniform sampler2D latLongEnv;&#xa;" name="genericTessEHead"/>
+  <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+  <string val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D normalMap;&#xa;uniform sampler2D latLongEnv;&#xa;" name="genericGeomHead"/>
+  <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+  <vector2f name="genericTSize">
+   <float val="1" name="0"/>
+   <float val="1" name="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+  </vector2f>
+  <bool val="0" name="genericNeedMouse"/>
+  <bool val="0" name="genericNeedKeyboard"/>
+  <uint val="0" name="genericNbWidgets"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint val="0" name="nbChildren"/>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeInputPos-0-1">
+  <float val="198" name="0"/>
+  <float val="49.5" name="1"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+</Gratin>

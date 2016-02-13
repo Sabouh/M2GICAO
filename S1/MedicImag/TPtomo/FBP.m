@@ -27,9 +27,10 @@ FG = zeros(Q,P);
 TFG = fft(g');
     for k=1:P
         FG(:,k) = filter' .* TFG(:,k);
+
     end
      GF = (ifft(FG))';
-     
+%end
 
 figure(2);
 imagesc(GF);

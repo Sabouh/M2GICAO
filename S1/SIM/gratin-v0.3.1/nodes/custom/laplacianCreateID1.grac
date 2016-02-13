@@ -1,0 +1,77 @@
+<Gratin type="node">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <string val="pyramidGenericId" name="coreHandleStringId"/>
+ <uint val="1" name="coreHandleVersion"/>
+ <string val="laplacianCreateID" name="nodeStringId-0"/>
+ <uint val="1" name="nodeVersion-0"/>
+ <string val="laplacianCreate" name="nodeName-0"/>
+ <string val="Analysis/" name="nodePath-0"/>
+ <string val="Create a laplacian pyramid" name="nodeDesc-0"/>
+ <string val="Create a laplacian pyramid. &#xa;The input must be a gaussian pyramid. &#xa;Each level of the pyramid can be accessed via the &quot;textureLod(texture,coord,LOD)&quot; function." name="nodeHelp-0"/>
+ <uint val="2" name="nodeId-0"/>
+ <uint val="0" name="nodeGraphId-0"/>
+ <vector2f name="nodePos-0">
+  <float val="918.738" name="0"/>
+  <float val="-413.794" name="1"/>
+ </vector2f>
+ <int val="1" name="nodeInputNameSize-0"/>
+ <int val="1" name="nodeOutputNameSize-0"/>
+ <string val="gaussianPyramid" name="nodeInputName-0-0"/>
+ <string val="pyramid" name="nodeOutputName-0-0"/>
+ <bool val="1" name="nodeHasWidget-0"/>
+ <IOData name="node-0">
+  <int val="0" name="processMode"/>
+  <string val="410" name="genericGlslVersion"/>
+  <string val="laplacianCreate" name="genericNodeName"/>
+  <bool val="0" name="genericUseVertex"/>
+  <bool val="0" name="genericUseTesselation"/>
+  <bool val="0" name="genericUseGeometry"/>
+  <bool val="1" name="genericUseFragment"/>
+  <int val="9729" name="genericOutFilter"/>
+  <int val="33071" name="genericOutWrap"/>
+  <bool val="0" name="genericUseDepthTest"/>
+  <bool val="0" name="genericUseBlending"/>
+  <uint val="513" name="genericDepthFunc"/>
+  <uint val="1" name="genericBlendSrc"/>
+  <uint val="0" name="genericBlendDst"/>
+  <vector4f name="genericBackground">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+   <float val="0" name="2"/>
+   <float val="0" name="3"/>
+  </vector4f>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D gaussianPyramid;&#xa;uniform sampler2D prevLevel0;&#xa;uniform int nbLevels;&#xa;uniform int numLevel;&#xa;uniform bool isFinest;&#xa;uniform bool isCoarsest;&#xa;" name="genericVertHead"/>
+  <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) out vec4 pyramid;&#xa;uniform sampler2D gaussianPyramid;&#xa;uniform sampler2D prevLevel0;&#xa;uniform int nbLevels;&#xa;uniform int numLevel;&#xa;uniform bool isFinest;&#xa;uniform bool isCoarsest;&#xa;" name="genericFragHead"/>
+  <string val="in vec2 texcoord;&#xa;&#xa;const mat3 weights = mat3(41.,26.,7.,26.,16.,4.,7.,4.,1.)/273.;&#xa;&#xa;float w(in int m,in int n) {&#xa;&#x9;return weights[abs(m)][abs(n)];&#xa;}&#xa;&#xa;vec4 expand(in sampler2D tex,in int level) {&#xa;&#x9;vec2 ps = 1./vec2(textureSize(tex,level));&#xa;&#x9;vec4 G = vec4(0.);&#xa;&#x9;for(int m=-2;m&lt;=2;++m) {&#xa;&#x9;&#x9;for(int n=-2;n&lt;=2;++n) {&#xa;&#x9;&#x9;&#x9;G = G+w(m,n)*textureLod(tex,texcoord+vec2(m,n)*ps,level);&#xa;&#x9;&#x9;}&#xa;&#x9;}&#xa;&#x9;&#xa;&#x9;return G;&#xa;}&#xa;&#xa;void main() {&#xa;&#x9;if(isCoarsest) {&#xa;&#x9;&#x9;pyramid = textureLod(gaussianPyramid,texcoord,numLevel);&#xa;&#x9;} else {&#xa;&#x9;&#x9;vec4 Gl1 = textureLod(gaussianPyramid,texcoord,numLevel);&#xa;&#x9;&#x9;vec4 Gl2Expanded = expand(gaussianPyramid,numLevel+1);&#xa;&#x9;&#x9;pyramid = Gl1-Gl2Expanded;&#xa;&#x9;&#x9;pyramid.w = 1.;&#xa;&#x9;}&#xa;}&#xa;" name="genericFragBody"/>
+  <string val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D gaussianPyramid;&#xa;uniform sampler2D prevLevel0;&#xa;uniform int nbLevels;&#xa;uniform int numLevel;&#xa;uniform bool isFinest;&#xa;uniform bool isCoarsest;&#xa;" name="genericTessCHead"/>
+  <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+  <string val="#version 410&#xa;&#xa;uniform sampler2D gaussianPyramid;&#xa;uniform sampler2D prevLevel0;&#xa;uniform int nbLevels;&#xa;uniform int numLevel;&#xa;uniform bool isFinest;&#xa;uniform bool isCoarsest;&#xa;" name="genericTessEHead"/>
+  <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+  <string val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D gaussianPyramid;&#xa;uniform sampler2D prevLevel0;&#xa;uniform int nbLevels;&#xa;uniform int numLevel;&#xa;uniform bool isFinest;&#xa;uniform bool isCoarsest;&#xa;" name="genericGeomHead"/>
+  <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+  <vector2f name="genericTSize">
+   <float val="1" name="0"/>
+   <float val="1" name="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+  </vector2f>
+  <bool val="0" name="genericNeedMouse"/>
+  <bool val="0" name="genericNeedKeyboard"/>
+  <uint val="0" name="genericNbWidgets"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint val="0" name="nbChildren"/>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+</Gratin>

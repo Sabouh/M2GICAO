@@ -1,0 +1,24 @@
+Bouhdid Sabine compte rendu
+
+Parseur : 
+
+On lit le fichier CSV ligne par ligne.
+La première ligne contient les clés de la table. On la sauvegarde alors dans une QStringList cles.
+Ensuite les données sont conservées lignes par lignes sous forme de QStringList dans un QVector<QStringList> donnees.
+L'utilisation de QStringList est justifiée par la méthode filter de cette classe qui permet de trouver une ligne contenant un certain champ de caractères.
+Cela facilite alors les join entre les tables sur les "ID".
+
+Ensuite, les coordonnees des stations peuvent être recupéré par l'appel de la fonction listePoints qui retourne un QVector<Point>
+
+
+Shepard : 
+
+On recupere les longitudes latitudes et altitudes minimales et maximales.
+Ensuite on crée une grille de longueur NxN
+Pour tous les points de cette grille, on interpole.
+
+Hardy :
+N/A
+
+Marching Square :
+ne fonctionne pas

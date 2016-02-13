@@ -1,0 +1,126 @@
+<Gratin type="node">
+ <int val="0" name="majorVersion"/>
+ <int val="3" name="minorVersion"/>
+ <string val="lambertianShadingID" name="coreHandleStringId"/>
+ <uint val="1" name="coreHandleVersion"/>
+ <string val="xtoonShadingID" name="nodeStringId-0"/>
+ <uint val="1" name="nodeVersion-0"/>
+ <string val="X-ToonShading" name="nodeName-0"/>
+ <string val="Rendering/" name="nodePath-0"/>
+ <string val="X-Toon shading [Barla et al. NPAR 2006]" name="nodeDesc-0"/>
+ <string val="Simple implementation of the paper &quot;X-Toon: An extended toon shader&quot; [Barla et al. NPAR 2006]. &#xa;&#xa;The node requires normals and depth as input (stored in a single image, the depth being stored in the alpha channel) and a xtoon map (2D color map defining shading colors). &#xa;&#xa;The x-axis corresponds to the lambertian intensity. &#xa;The choice of the y-coordinate is done according to any other property in the scene. &#xa;We use the (normalized) depth here to illustrate the technique. &#xa;&#xa;The light direction is controlled via the mouse in the interaction widget." name="nodeHelp-0"/>
+ <uint val="4" name="nodeId-0"/>
+ <uint val="0" name="nodeGraphId-0"/>
+ <vector2f name="nodePos-0">
+  <float val="872.063" name="0"/>
+  <float val="-1252.78" name="1"/>
+ </vector2f>
+ <int val="2" name="nodeInputNameSize-0"/>
+ <int val="1" name="nodeOutputNameSize-0"/>
+ <string val="normalDepthMap" name="nodeInputName-0-0"/>
+ <string val="xtoonMap" name="nodeInputName-0-1"/>
+ <string val="shading" name="nodeOutputName-0-0"/>
+ <bool val="1" name="nodeHasWidget-0"/>
+ <IOData name="node-0">
+  <string val="410" name="genericGlslVersion"/>
+  <string val="X-ToonShading" name="genericNodeName"/>
+  <bool val="0" name="genericUseVertex"/>
+  <bool val="0" name="genericUseTesselation"/>
+  <bool val="0" name="genericUseGeometry"/>
+  <bool val="1" name="genericUseFragment"/>
+  <int val="9729" name="genericOutFilter"/>
+  <int val="33071" name="genericOutWrap"/>
+  <bool val="0" name="genericUseDepthTest"/>
+  <bool val="0" name="genericUseBlending"/>
+  <uint val="513" name="genericDepthFunc"/>
+  <uint val="1" name="genericBlendSrc"/>
+  <uint val="0" name="genericBlendDst"/>
+  <vector4f name="genericBackground">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+   <float val="0" name="2"/>
+   <float val="0" name="3"/>
+  </vector4f>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) in vec2 vertex;&#xa;layout(location = 1) in vec2 coord;&#xa;uniform sampler2D normalDepthMap;&#xa;uniform sampler2D xtoonMap;&#xa;uniform vec2 mouse;&#xa;" name="genericVertHead"/>
+  <string val="out vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = vec4(vertex,0,1);&#xa;&#x9;texcoord    = coord;&#xa;}&#xa;" name="genericVertBody"/>
+  <string val="#version 410&#xa;&#xa;layout(location = 0) out vec4 shading;&#xa;uniform sampler2D normalDepthMap;&#xa;uniform sampler2D xtoonMap;&#xa;uniform vec2 mouse;&#xa;" name="genericFragHead"/>
+  <string val="in vec2 texcoord;&#xa;&#xa;void main() {&#xa;&#x9;vec2 m = mouse/vec2(textureSize(normalDepthMap,0))-vec2(.5);&#xa;&#x9;vec3 l = normalize(vec3(m,.5));&#xa;&#x9;vec4 nd = texture(normalDepthMap,texcoord);&#xa;&#xa;&#x9;// the x-coord is the lambertian intensity&#xa;&#x9;// the y-coord is here accessed with object depth&#xa;&#x9;// but any other type of data could be used &#xa;&#x9;// (e.g.  slant, orientation, curvature, etc)&#xa;&#x9;// see the original paper for more details&#xa;&#xa;&#x9;shading.xyz = texture(xtoonMap,vec2(max(dot(nd.xyz,l),0.),nd.w)).xyz;&#xa;&#x9;shading.w = length(nd.xyz);&#xa;}&#xa;" name="genericFragBody"/>
+  <string val="#version 410&#xa;&#xa;layout(vertices = 4) out;&#xa;uniform sampler2D normalDepthMap;&#xa;uniform sampler2D xtoonMap;&#xa;uniform vec2 mouse;&#xa;" name="genericTessCHead"/>
+  <string val="void main(void) {&#xa;&#x9;gl_TessLevelOuter[0] = 1;&#xa;&#x9;gl_TessLevelOuter[1] = 1;&#xa;&#x9;gl_TessLevelOuter[2] = 1;&#xa;&#x9;gl_TessLevelOuter[3] = 1;&#xa;&#x9;gl_TessLevelInner[0] = 1;&#xa;&#x9;gl_TessLevelInner[1] = 1;&#xa;&#x9;gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;&#xa;}&#xa;" name="genericTessCBody"/>
+  <string val="#version 410&#xa;&#xa;uniform sampler2D normalDepthMap;&#xa;uniform sampler2D xtoonMap;&#xa;uniform vec2 mouse;&#xa;" name="genericTessEHead"/>
+  <string val="layout(quads,equal_spacing) in;&#xa;&#xa;void main() {&#xa;&#x9;vec4 p1 = mix(gl_in[0].gl_Position,gl_in[1].gl_Position,gl_TessCoord.x);&#xa;&#x9;vec4 p2 = mix(gl_in[3].gl_Position,gl_in[2].gl_Position,gl_TessCoord.x);&#xa;&#x9;gl_Position = mix(p1,p2,gl_TessCoord.y);&#xa;}&#xa;" name="genericTessEBody"/>
+  <string val="#version 410&#xa;&#xa;layout(triangles) in;&#xa;uniform sampler2D normalDepthMap;&#xa;uniform sampler2D xtoonMap;&#xa;uniform vec2 mouse;&#xa;" name="genericGeomHead"/>
+  <string val="layout(triangle_strip, max_vertices = 3) out;&#xa;&#xa;void main() {&#xa;&#x9;gl_Position = gl_in[0].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[1].gl_Position; EmitVertex();&#xa;&#x9;gl_Position = gl_in[2].gl_Position; EmitVertex();&#xa;&#x9;EndPrimitive();&#xa;}" name="genericGeomBody"/>
+  <vector2f name="genericTSize">
+   <float val="1" name="0"/>
+   <float val="1" name="1"/>
+  </vector2f>
+  <vector2f name="genericTOffset">
+   <float val="0" name="0"/>
+   <float val="0" name="1"/>
+  </vector2f>
+  <bool val="1" name="genericNeedMouse"/>
+  <bool val="0" name="genericNeedKeyboard"/>
+  <uint val="0" name="genericNbWidgets"/>
+ </IOData>
+ <IOData name="nodeWidget-0">
+  <uint val="1" name="nbChildren"/>
+  <IOData name="childWidget-0">
+   <bool val="1" name="vector2iAttribKeyframed"/>
+   <vector2i name="vector2iAttribMinVal">
+    <int val="-10000" name="0"/>
+    <int val="-10000" name="1"/>
+   </vector2i>
+   <vector2i name="vector2iAttribMaxVal">
+    <int val="10000" name="0"/>
+    <int val="10000" name="1"/>
+   </vector2i>
+   <IOData name="vector2iAttribCurve">
+    <vector2i name="currentVal">
+     <int val="-67" name="0"/>
+     <int val="504" name="1"/>
+    </vector2i>
+    <uint val="2" name="nbCurves"/>
+    <IOData name="curve-0">
+     <int val="0" name="interpType"/>
+     <int val="0" name="leftType"/>
+     <int val="0" name="rightType"/>
+     <IOData name="interpolator">
+      <uint val="1" name="nbPoints"/>
+      <uint val="0" name="nbTangents"/>
+      <vector2f name="controlPoint-0">
+       <float val="0" name="0"/>
+       <float val="-67" name="1"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+    <IOData name="curve-1">
+     <int val="0" name="interpType"/>
+     <int val="0" name="leftType"/>
+     <int val="0" name="rightType"/>
+     <IOData name="interpolator">
+      <uint val="1" name="nbPoints"/>
+      <uint val="0" name="nbTangents"/>
+      <vector2f name="controlPoint-0">
+       <float val="0" name="0"/>
+       <float val="504" name="1"/>
+      </vector2f>
+     </IOData>
+    </IOData>
+   </IOData>
+   <uint val="0" name="nbChildren"/>
+  </IOData>
+ </IOData>
+ <vector2f name="nodeInputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeInputPos-0-1">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+ <vector2f name="nodeOutputPos-0-0">
+  <float val="56.32" name="0"/>
+  <float val="28.16" name="1"/>
+ </vector2f>
+</Gratin>
