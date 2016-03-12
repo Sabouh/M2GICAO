@@ -1,0 +1,400 @@
+      in vec2 texcoord;
+in vec4 gl_FragCoord;
+#define NUM_PLANS 1
+#define NUM_SPHERES 2
+#define NUM_COULEURS 7
+#define NB_ITER_MAX 100
+precision highp float;
+
+//Camera
+//defini par une position et 3 vecteurs (up,view,right)
+struct Camera{
+	vec3 e;//position de la camera
+	vec3 u; // right
+	vec3 v; // vecteur up
+	vec3 w; //vecteur view direction vers la scene
+};
+
+//Plan
+struct Plane{
+	vec3 n;//normal
+	float d;//offset
+};
+
+//Plan implicite
+float sdPlane( vec3 p, vec4 n )
+{
+  // n must be normalized
+  return dot(p,n.xyz) +n.w;
+}
+
+
+
+//Rayon
+struct Ray{
+	vec3 ro; //origin
+	vec3 rd; //direction
+};
+
+//Sphere
+struct Sphere{
+	vec3 o; //origin
+     float r;//rayon
+};
+
+float sdSphere( vec3 p, vec3 o, float s )
+{
+	//return length(p)-s;
+	float po = distance(p,o);
+	return length(o - p) - s;
+
+}
+
+struct Paquet{
+	vec3 n; // normale
+	vec3 prof; // profondeur
+	float dist;  //distance a la lumiere
+	int coul; // indice de la couleur
+	vec3 p; // position de l'objet
+};
+
+//Operations
+/*
+float opRep( vec3 p, vec3 c )
+{
+    vec3 q = mod(p,c)-0.5*c;
+    return primitive( q );
+}
+
+vec3 opTx( vec3 p, mat4 m )
+{
+    vec3 q = invert(m)*p;
+    return primitive(q);
+}
+
+float opDisplace( vec3 p )
+{
+    float d1 = primitive(p);
+    float d2 = displacement(p);
+    return d1+d2;
+}
+
+float opBlend( vec3 p )
+{
+    float d1 = primitiveA(p);
+    float d2 = primitiveB(p);
+    return smin( d1, d2 );
+}
+*/
+
+//attributs
+Camera cam;
+Plane murs[ NUM_PLANS ];
+Sphere balles[NUM_SPHERES];
+vec4 couleurs[NUM_COULEURS];
+vec3 lumiere;
+
+//initialisation de la caméra
+void initCam(){
+
+	vec2 iResolution = vec2(512,512);
+	float iGlobalTime = 5;
+    float PI = 3.14159;
+	float rotX = 2.0*PI*(mouse.x/iResolution.x);
+
+	//position de la camera
+    cam.e = vec3(cos(rotX),0.475,sin(rotX))*2.3;
+	//direction
+    cam.w = normalize(vec3(0,-0.25,0)-cam.e);
+	//right
+    cam.u = normalize(cross(cam.w,vec3(0,1,0)));
+	//up
+    cam.v = cross(cam.u,cam.w);
+}
+
+void initLight(){
+	lumiere = lightPos;
+
+}
+
+//initialisation des plans, ici 5 "murs"
+void initPlans(){
+	//Salle : Fond de la salle, Mur gauche , Sol de la salle, Mur droit, Plafond 
+	//murs = Plane[]( Plane(vec3(0,0,1),-0.5) , Plane(vec3(1,0,0),2) , Plane(vec3(0,1,0),-0.5) , Plane(vec3(-1,0,0),0.5) , Plane(vec3(0,1,0),0.5) );
+	//plan bas 
+	murs = Plane[](Plane(normalize(vec3(0,1,0)),0.5) );
+
+	//3 plans principaux Oxy , Oyz et Ozx 
+	//murs = Plane[](Plane(normalize(vec3(0,0,1)),0), Plane(normalize(vec3(1,0,0)),0), Plane(normalize(vec3(0,1,0)),0) ); 
+
+}
+
+//initialisation des spheres
+void initSpheres(){
+	//On place la sphère
+	balles = Sphere[](Sphere(vec3(0,0,3),0.4),Sphere(vec3(0,-0.3,0),0.3) ) ;//vec3(0,2,0)
+}
+
+void initCouleur(){
+	// COULEURS DIFFERENTES
+	//[BLEU ; MAGENTA ; ROUGE ; JAUNE ; VERT ;CYAN]
+	couleurs = vec4[](vec4(0,0,1,1), vec4(1,0,1,1), vec4(1,0,0,1), vec4(1,1,0,1), vec4(0,1,0,1),vec4(0,1,1,1),vec4(0,0,0,1));
+}
+
+//RayMarching
+Paquet rayMarching(){
+//On prend la position du pixel entre [-1 ; 1]
+	vec2 pos =( gl_FragCoord.xy - (512.0/2) ) / (512.0/2) ;
+	//On affiche la source de lumiere
+	//generer un rayon avec la camera
+	float D  = 1.0/(tan(3.14/4.0)); //radian
+	Ray ray = Ray( cam.e , normalize(vec3(pos.x*cam.u+pos.y*cam.v+D*cam.w)) ) ;
+	Plane plan ;
+	Sphere ball ;
+	vec3 p;
+	float t =0;
+	vec4 n;
+	float pas =0.1;
+	float dist[ NUM_PLANS+NUM_SPHERES ];
+	for( int i=0;i<NB_ITER_MAX;i++){
+		p = ray.ro + ray.rd*t;		
+		for(int j=0;j<NUM_PLANS+NUM_SPHERES;j++){
+			if(j < NUM_PLANS){
+				n = vec4(murs[j].n,murs[j].d);
+				dist[j] = sdPlane(p,n);
+				if(dist[j] <=0){
+					return Paquet(n.xyz,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),
+								distance(p.xyz,lumiere),j,p);
+				}
+			}else{
+				dist[j] = sdSphere(p,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+				if(dist[j] <=0){
+					//Calcul des normales
+					//calculs des points avant et  apres selon x, y et z pour calculer le gradient -> normale
+					vec3 pprecx =  vec3(p.x-pas,p.y,p.z);
+					vec3 pprecy =  vec3(p.x,p.y-pas,p.z);
+					vec3 pprecz =  vec3(p.x,p.y,p.z-pas);
+					vec3 psuivx =  vec3(p.x+pas,p.y,p.z);
+					vec3 psuivy =  vec3(p.x,p.y+pas,p.z);
+					vec3 psuivz =  vec3(p.x,p.y,p.z+pas);
+					float distprecx =  sdSphere(pprecx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distprecy =  sdSphere(pprecy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distprecz =  sdSphere(pprecz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivx = sdSphere(psuivx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivy = sdSphere(psuivy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivz = sdSphere(psuivz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					//On normalise les coordonnees de la normale
+					vec3 norm =  normalize(vec3(distsuivx-distprecx,distsuivy-distprecy,distsuivz-distprecz));
+					return Paquet(norm,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),
+								distance(p.xyz,lumiere),j,p);
+				}
+			}
+
+		}
+		t += pas;
+	}
+return Paquet(vec3(0,0,0),vec3(0,0,0),0.0,6,p);
+}
+
+
+vec4 rayMarching2(Ray ray, Paquet paq){
+	
+	vec3 p;
+	float t =0;
+	vec4 n;
+	float pas =0.1;
+	Paquet init = paq;
+	float dist_Lum = 1;
+	float dist_Obj_Obj ;
+	float dist_Lum_Obj ;
+
+	float rayon = 0.3;
+
+	float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;
+	//si lumiere
+	if( dist  <= pow(rayon,2) ){
+		paq.coul = 3;
+		return couleurs[paq.coul];
+	}
+
+	for( int i=0;i<NB_ITER_MAX;i++){
+		p = ray.ro + ray.rd*t;	
+
+		//On regarde la distance à la lumiere
+		if(init.coul < NUM_PLANS){//si l'objet regardé est un plan
+			n = vec4(murs[init.coul].n,murs[init.coul].d);
+			dist_Lum = sdPlane(lumiere,n);
+
+		}else{//si c'est une sphere
+			dist_Lum = sdSphere(lumiere, balles[init.coul-NUM_PLANS].o,balles[init.coul-NUM_PLANS].r);
+		}
+		
+
+		//Pour chaque objet, on regarde si on intersecte la lumiere
+		//c'est à dire si dist_Lum > dist_Lum_Obj	
+
+		for(int j=0;j<NUM_PLANS+NUM_SPHERES;j++){
+			if(j < NUM_PLANS){
+				n = vec4(murs[j].n,murs[j].d);
+				dist_Obj_Obj = sdPlane(p,n);
+				dist_Lum_Obj = sdPlane(lumiere,n);
+
+				if( dist_Obj_Obj <= 0 &&  dist_Lum_Obj <dist_Lum){
+					return couleurs[paq.coul]*0.5;
+
+				}
+
+			}else{
+				dist_Obj_Obj = sdSphere(p,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+				dist_Lum_Obj = sdSphere(lumiere,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+				if(dist_Obj_Obj <= 0 &&  dist_Lum_Obj < dist_Lum){
+					return couleurs[paq.coul]*0.5;
+				}
+			}
+
+		}
+
+		t+=pas;
+	}
+	
+		return couleurs[init.coul];
+	
+}
+
+//**********************************************************RAY MARCHING TEST
+Paquet rayMarchingTEST(){
+//On prend la position du pixel entre [-1 ; 1]
+	vec2 pos =( gl_FragCoord.xy - (512.0/2) ) / (512.0/2) ;
+	//On affiche la source de lumiere
+	//generer un rayon avec la camera
+	float D  = 1.0/(tan(3.14/4.0)); //radian
+	Ray ray = Ray( cam.e , normalize(vec3(pos.x*cam.u+pos.y*cam.v+D*cam.w)) ) ;
+	Ray rayShadow;
+	Plane plan ;
+	Sphere ball ;
+	vec3 p;
+	float t =0;
+	vec4 n;
+	float pas =0.1;
+	float dist[ NUM_PLANS+NUM_SPHERES ];
+	for( int i=0;i<NB_ITER_MAX;i++){
+		p = ray.ro + ray.rd*t;		
+		for(int j=0;j<NUM_PLANS+NUM_SPHERES;j++){
+			if(j < NUM_PLANS){
+				n = vec4(murs[j].n,murs[j].d);
+				dist[j] = sdPlane(p,n);
+				if(dist[j] <=0){
+ 					rayShadow = Ray(p,normalize(lumiere-p));
+					return Paquet(n.xyz,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),
+								distance(p.xyz,lumiere),j,p);
+				}
+			}else{
+				dist[j] = sdSphere(p,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+				if(dist[j] <=0){
+					//Calcul des normales
+					//calculs des points avant et  apres selon x, y et z pour calculer le gradient -> normale
+					vec3 pprecx =  vec3(p.x-pas,p.y,p.z);
+					vec3 pprecy =  vec3(p.x,p.y-pas,p.z);
+					vec3 pprecz =  vec3(p.x,p.y,p.z-pas);
+					vec3 psuivx =  vec3(p.x+pas,p.y,p.z);
+					vec3 psuivy =  vec3(p.x,p.y+pas,p.z);
+					vec3 psuivz =  vec3(p.x,p.y,p.z+pas);
+					float distprecx =  sdSphere(pprecx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distprecy =  sdSphere(pprecy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distprecz =  sdSphere(pprecz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivx = sdSphere(psuivx,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivy = sdSphere(psuivy,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					float distsuivz = sdSphere(psuivz,balles[j-NUM_PLANS].o,balles[j-NUM_PLANS].r);
+					//On normalise les coordonnees de la normale
+					vec3 norm =  normalize(vec3(distsuivx-distprecx,distsuivy-distprecy,distsuivz-distprecz));
+					return Paquet(norm,vec3(t/(NB_ITER_MAX*pas) , t/(NB_ITER_MAX*pas)  , t/(NB_ITER_MAX*pas)),
+								distance(p.xyz,lumiere),j,p);
+				}
+			}
+
+		}
+		t += pas;
+	}
+return Paquet(vec3(0,0,0),vec3(0,0,0),0.0,6,p);
+}
+//******************************************************************************
+
+
+//Affichage de la scene avec couleurs
+vec4 affichageSimple(){
+	Paquet paq = rayMarching();
+	return couleurs[paq.coul];
+}
+
+
+//affichage normales
+vec4 affichageNormales(){
+	Paquet paq = rayMarching();
+	return vec4(paq.n.xyz,1);
+}
+
+
+//affichage Profondeur
+vec4 affichageProfondeur(){
+	Paquet paq = rayMarching();
+	return vec4(paq.prof,1);
+}
+
+
+
+//affichage Shading
+vec4 directIllumination(){
+
+	float rayon = 0.3;
+	Paquet paq = rayMarching();
+	float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;
+	//si lumiere
+	if( dist  <= pow(rayon,2) ){
+		return (sqrt(dist)/rayon)*couleurs[3];
+	}
+	// dot(normale, lumiere) * couleur
+	return vec4( ( dot(paq.n.xyz,normalize(lumiere-paq.p))*vec4(couleurs[paq.coul].xyz,1) ).xyz, 1);
+	
+}
+
+
+//affichage Ombre
+vec4 affichageOmbres(){
+
+	float rayon = 0.3;
+	Paquet paq = rayMarching();
+	float dist = pow(paq.p.x-lumiere.x,2) + pow(paq.p.y-lumiere.y,2) + pow(paq.p.z-lumiere.z,2) ;
+	//si lumiere
+	if( dist  <= pow(rayon,2) ){
+		return couleurs[3];
+	}else{
+	// dot(normale, lumiere) * couleur
+		Ray ray = Ray(paq.p,normalize(lumiere-paq.p));
+		vec4 n_coul = rayMarching2(ray,paq);
+    		//return n_coul;
+		return vec4( ( dot(paq.n.xyz,normalize(lumiere-paq.p))*vec4(n_coul.xyz,1) ).xyz, 1);
+	}
+	
+}
+
+//variations
+
+
+
+
+
+//Main
+void main() {
+	outBuffer0 = vec4(1,1,1,1);
+	initCouleur();
+	initCam();
+	initLight();
+	initPlans();
+	initSpheres();
+	//outBuffer0 = affichageSimple();
+	//outBuffer0 = affichageNormales();
+	//outBuffer0 = affichageProfondeur();
+	outBuffer0 =  directIllumination();
+	//outBuffer0 =  affichageOmbres();
+}
+

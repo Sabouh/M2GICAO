@@ -1,0 +1,157 @@
+	\documentclass[11pt,a4paper]{article} 
+\usepackage[dvipsnames,svgnames,table]{xcolor}
+\usepackage{fancyhdr}
+\usepackage[color]{showkeys}
+\usepackage{etoolbox}
+\usepackage{titlesec}
+\usepackage{titletoc}
+\usepackage{graphicx}
+\usepackage[pdftex,
+bookmarks=true,
+bookmarksnumbered=true,
+]{hyperref}
+
+%% taille du papier
+\textwidth 16 true cm
+\textheight 24 true cm
+\addtolength{\hoffset}{-1.5cm}
+\addtolength{\voffset}{-1.5cm}
+
+
+%-------- couleurs
+\definecolor{grisf}{rgb}{.47,.47,.47} % barre de droite gris fonce
+\newcommand{\colorc}{\color{MidnightBlue}}
+\newcommand{\colorb}{\color{NavyBlue}}
+\newcommand{\colora}{\color{Cerulean}}
+
+%----------- sections et TOC
+% chapitres
+\titleformat{\chapter}[display]
+  {\normalfont\sffamily\bfseries\huge\colora\centering}{\thechapter}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{{\titlerule[1pt]}}]
+  
+% chapitres etoiles  
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\sffamily\bfseries\LARGE\colora\centering}{}{1ex}
+  {{\titlerule[1pt]}\vspace{1.3ex}}[\vspace{1ex}{\titlerule[1pt]}\vspace{2ex}]
+  
+% sections  
+\titleformat{\section}[hang]{\Large\normalfont\sffamily\bfseries\colora}{{\thesection\, }}{0 em}
+  {}[{\titlerule[1pt]}\vspace{1ex}]
+
+  
+% sous section, sous sous sec, paragraphes  
+\titleformat{\subsection}[hang]{\Large\normalfont\sffamily\bfseries\colorc}{{\thesubsection\, }}{0 em}
+  {}[{\titlerule}\vspace{.7ex}]
+\titleformat{\subsubsection}[hang]{\normalfont\sffamily\bfseries\large}{{\thesubsubsection\, }}{0 em}
+  {}[{\color{grisf}\titlerule}\vspace{3pt}]
+\titleformat{\paragraph}[runin]{\normalfont\sffamily\bfseries\colorb}{}{0 em}
+  {\indent}
+
+
+
+%----------------- fancy headers -------------%
+
+\makeatletter
+\patchcmd{\@fancyhead}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\headrule}{\hrule}{\color{grisf}\hrule}{}{}
+\patchcmd{\@fancyfoot}{\rlap}{\color{grisf}\rlap}{}{}
+\patchcmd{\footrule}{\hrule}{\color{grisf}\hrule}{}{}
+\makeatother
+
+                                                                        
+\fancyhf{}
+\fancyhead[R]{\sffamily HPC Project }
+\fancyfoot[R]{\sffamily\small{\thepage}}
+\fancyhead[L]{\sffamily\small{Sabine Bouhdid}}
+\fancyfoot[L]{\sffamily\small{ Image Interpolation with Geometric Contour Stencils }}
+\renewcommand{\headrulewidth}{0.2pt} %0.4
+\renewcommand{\footrulewidth}{0.2pt} %0
+\addtolength{\headheight}{0.pt}
+
+\fancypagestyle{plain}{
+  \fancyhead{}
+  \renewcommand{\headrulewidth}{0pt}
+  }
+     
+     
+ 
+
+\begin{document} 
+
+
+\pagestyle{fancy}
+ 
+
+
+\section{Steps}
+\begin{enumerate}
+\item \textbf{Computing the non-oriented normals}.
+\begin{itemize}
+\item \textbf{Computing the center of gravity}. The center of gravity is computed by the function, \textbf{center--of--
+gravity}.
+\item \textbf{Computing the matrix A}. Matrix A is defined 
+\begin{center}
+$A=pts-B$,
+\end{center}
+where, pts is a list of K neighbors and B is the coordinate of the center of gravity. Next, three vectors  $a_{1}, a_{2}, a_{3}$ with k components defined as the columns of matrix A. Then, the matrix $A^{T}A$ is obtained by scalar product between these three vectors. Finally, the eigen vector associated with minimum eigen vector is used as the normal.
+\end{itemize}
+\item \textbf{Minimum spanning tree}. For this case, at first, the function \textbf{computeRadius} is defined to find the appropriate radius. Then for every point $p_{i}$, the other points $p_{j}$, are checked to determine which points belong to the circle with radius r.
+Next the weight is computed by 
+\begin{center}
+ $1-\vert | <n_{i}, n_{j}> | \vert$,
+ \end{center} 
+ Where $n_{i}$ and $n_{j}$ are the normal vectors at point $p_{i}$ and $p_{j}$ respectively, and $| <\cdot ,\cdot> |$ denotes the absolute value of the scalar product.
+The weighted arc is added by the related function.
+Finally the function \textbf{arbre\_couvrant\_minimal()} is called on the proximity weighted tree so it will return the minimal spanning tree.
+\item \textbf{Reorientation of normals}. 
+In the function computeOrientedNormals(),  first we set a vector of boolean that tells if a node has been browsed or not.
+Then the recursive function \textbf{normalsRedirection()} is called. In this function, for every node sons , we look if the scalar product between its normal and its father's normal is negative. If it is, that means the normals of the father and the son are in opposite direction so we change the direction of son's normal. Then we call the recursive function on the son.
+
+\item \textbf{The implicit function}.
+
+For every point of the mesh, we compute the implict function
+\begin{center}
+ $ f(x) = \frac{\sum{}{} n_{i}^T (x-x_{i}) wi(x)}{\sum{}{} w_{i}(x)} $
+ \end{center} 
+
+
+\item \textbf{Isovalue surface}.
+First we computed the 3D Grid delimited by the minimum and maximum x,y and z of the points of the mesh.
+Then we created a vector v of size $(nx + 1)$ x $(ny + 1)$ x $(nz +1)$, with $nx$ x $ny$ x $nz$ as the resolution of the 3D grid. And for every index of that array we assigned the value of the implicit function that we coded previously.
+Finally, we computed the isovalue surface by calling the given function \textbf{surface\_isovaleur()}
+
+
+\item \textbf{Final normals}.
+
+The final normals n are defined for each vertices of each triangles in surfacep by the following equations :
+
+\begin{center}
+ $ nx = f(x_{i} - 0.01, y_{i},z_{i}) - f(x_{i} + 0.01, y_{i},z_{i}) $\\
+ $ ny = f(x_{i} , y_{i} - 0.01,z_{i}) - f(x_{i}, y_{i}  + 0.01 ,z_{i}) $\\
+ $ nz = f(x_{i} , y_{i},z_{i} - 0.01) - f(x_{i} , y_{i},z_{i} + 0.01) $\\
+ $n = normalize( n_{x} , n_{y}, n_{z})$
+ 
+ \end{center} 
+
+\end{enumerate}
+
+
+\end{document}
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
