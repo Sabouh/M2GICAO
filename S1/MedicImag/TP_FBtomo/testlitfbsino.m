@@ -52,7 +52,6 @@ figure(2);
 imagesc(filteredwdata);
 
 %backprojection
-
 %
 pasPhi  = 2*pi/(ndet-1);
 phi = 0:pasPhi:2*pi;
@@ -98,6 +97,6 @@ for i= 1:N
 end
 
 
-figure(3);
+figure;
 colormap(gray);
 imagesc(mu);
